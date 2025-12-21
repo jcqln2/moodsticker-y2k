@@ -1,0 +1,13 @@
+[phases.setup]
+nixPkgs = ["php83", "php83Extensions.gd", "php83Extensions.pdo", "php83Extensions.pdo_sqlite"]
+
+[phases.install]
+cmds = ["echo 'Installing dependencies...'"]
+
+[phases.build]
+cmds = [
+    "php setup-database.php"
+]
+
+[start]
+cmd = "php -S 0.0.0.0:$PORT -t public router.php"

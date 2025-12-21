@@ -1,0 +1,157 @@
+<!-- /public/views/personalization.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customize Your Sticker! ✨</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="personalization-page">
+    <!-- Animated background elements -->
+    <div class="sparkles-container" id="sparkles"></div>
+    <div class="floating-shapes" id="shapes"></div>
+    
+    <div class="container">
+        <header class="page-header">
+            <a href="mood-selection.html" class="back-button">← Back</a>
+            <h1 class="page-title">Make It Yours! 💖</h1>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 66%"></div>
+            </div>
+            <p class="step-indicator">Step 2 of 3</p>
+        </header>
+
+        <main class="personalization-content">
+            <!-- Selected Mood Display -->
+            <div class="selected-mood-display" id="moodDisplay">
+                <p class="selected-mood-label">Your Mood:</p>
+                <div class="mood-badge">
+                    <span class="mood-badge-emoji" id="displayEmoji">😊</span>
+                    <span class="mood-badge-name" id="displayName">Loading...</span>
+                </div>
+            </div>
+
+            <!-- Customization Form -->
+            <div class="customization-section">
+                <div class="section-header">
+                    <h2>Personalize Your Sticker</h2>
+                    <p class="section-subtitle">(All fields are optional!)</p>
+                </div>
+
+                <form id="customizationForm">
+                    <!-- Name/Nickname -->
+                    <div class="form-group">
+                        <label for="userName">
+                            <span class="label-icon">✏️</span>
+                            Your Name or Nickname
+                        </label>
+                        <input 
+                            type="text" 
+                            id="userName" 
+                            name="userName" 
+                            placeholder="e.g., Sarah, Cool Kid, etc."
+                            maxlength="20"
+                            class="form-input"
+                        >
+                        <small class="input-hint">This will appear on your sticker</small>
+                    </div>
+
+                    <!-- Custom Text -->
+                    <div class="form-group">
+                        <label for="customText">
+                            <span class="label-icon">💬</span>
+                            Add a Phrase
+                        </label>
+                        <div class="phrase-options">
+                            <button type="button" class="phrase-btn" data-phrase="BRB">BRB</button>
+                            <button type="button" class="phrase-btn" data-phrase="OMG">OMG</button>
+                            <button type="button" class="phrase-btn" data-phrase="Luv U">Luv U</button>
+                            <button type="button" class="phrase-btn" data-phrase="Rad">Rad</button>
+                            <button type="button" class="phrase-btn" data-phrase="2 Cool">2 Cool</button>
+                            <button type="button" class="phrase-btn" data-phrase="Whatever">Whatever</button>
+                            <button type="button" class="phrase-btn" data-phrase="YOLO">YOLO</button>
+                            <button type="button" class="phrase-btn" data-phrase="Vibes ✨">Vibes ✨</button>
+                        </div>
+                        <input 
+                            type="text" 
+                            id="customText" 
+                            name="customText" 
+                            placeholder="Or type your own..."
+                            maxlength="30"
+                            class="form-input"
+                        >
+                        <small class="input-hint">Max 30 characters</small>
+                    </div>
+
+                    <!-- Color Picker -->
+                    <div class="form-group">
+                        <label for="customColor">
+                            <span class="label-icon">🎨</span>
+                            Pick Your Fave Color
+                        </label>
+                        <div class="color-palette">
+                            <button type="button" class="color-btn" data-color="#FF00FF" style="background: #FF00FF;" title="Hot Pink"></button>
+                            <button type="button" class="color-btn" data-color="#00FFFF" style="background: #00FFFF;" title="Cyan"></button>
+                            <button type="button" class="color-btn" data-color="#FFFF00" style="background: #FFFF00;" title="Yellow"></button>
+                            <button type="button" class="color-btn" data-color="#FF6600" style="background: #FF6600;" title="Orange"></button>
+                            <button type="button" class="color-btn" data-color="#9933FF" style="background: #9933FF;" title="Purple"></button>
+                            <button type="button" class="color-btn" data-color="#CCFF00" style="background: #CCFF00;" title="Lime"></button>
+                            <button type="button" class="color-btn" data-color="#FF69B4" style="background: #FF69B4;" title="Pink"></button>
+                            <button type="button" class="color-btn" data-color="#00FF00" style="background: #00FF00;" title="Green"></button>
+                            <button type="button" class="color-btn" data-color="#FFB6C1" style="background: #FFB6C1;" title="Light Pink"></button>
+                            <button type="button" class="color-btn" data-color="#FF1493" style="background: #FF1493;" title="Deep Pink"></button>
+                        </div>
+                        <input 
+                            type="color" 
+                            id="customColor" 
+                            name="customColor" 
+                            value="#FF00FF"
+                            class="color-input"
+                        >
+                        <small class="input-hint">Or use the color picker above</small>
+                    </div>
+
+                    <!-- Preview Section -->
+                    <div class="preview-section">
+                        <h3>Preview</h3>
+                        <div class="sticker-preview" id="stickerPreview">
+                            <div class="preview-placeholder">
+                                <p>Your customizations will appear here!</p>
+                                <p class="preview-hint">Fill out the form above to see a preview</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="skipBtn">
+                            Skip Customization →
+                        </button>
+                        <button type="submit" class="btn-primary" id="generateBtn">
+                            <span class="btn-icon">✨</span>
+                            Generate My Sticker!
+                            <span class="btn-icon">✨</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer class="page-footer">
+            <p>Make it uniquely YOU! 💖</p>
+        </footer>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal" id="loadingModal">
+        <div class="modal-content loading-content">
+            <div class="loading-spinner"></div>
+            <h2>Creating Your Sticker...</h2>
+            <p class="loading-text">Adding that Y2K magic! ✨</p>
+        </div>
+    </div>
+
+    <script src="../js/personalization.js"></script>
+</body>
+</html>

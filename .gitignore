@@ -1,0 +1,20 @@
+# Ignore generated stickers
+storage/stickers/*.png
+!storage/stickers/.gitkeep
+
+# Ignore database (will be regenerated)
+storage/database.sqlite
+
+# Ignore logs
+logs/*.log
+!logs/.gitkeep
+
+# Ignore Mac files
+.DS_Store
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore sensitive config (if you add passwords later)
+# config/secrets.php

@@ -1,0 +1,130 @@
+<!-- /public/views/gallery.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticker Gallery ✨</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="gallery-page">
+    <!-- Animated background elements -->
+    <div class="sparkles-container" id="sparkles"></div>
+    <div class="floating-shapes" id="shapes"></div>
+    
+    <div class="container">
+        <header class="page-header">
+            <a href="landing.html" class="back-button">← Home</a>
+            <h1 class="page-title">Sticker Gallery 🎨</h1>
+            <p class="page-subtitle">Check out all the mood stickers created!</p>
+        </header>
+
+        <main class="gallery-content">
+            <!-- Filter & Sort Controls -->
+            <div class="gallery-controls">
+                <div class="control-group">
+                    <label for="sortSelect">
+                        <span class="control-icon">🔀</span>
+                        Sort By:
+                    </label>
+                    <select id="sortSelect" class="control-select">
+                        <option value="recent">Most Recent</option>
+                        <option value="popular">Most Downloaded</option>
+                        <option value="mood">By Mood (A-Z)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="moodFilter">
+                        <span class="control-icon">😊</span>
+                        Filter by Mood:
+                    </label>
+                    <select id="moodFilter" class="control-select">
+                        <option value="all">All Moods</option>
+                        <!-- Will be populated by JavaScript -->
+                    </select>
+                </div>
+
+                <div class="stats-display">
+                    <span class="stat-item">
+                        <span class="stat-icon">📸</span>
+                        <span id="totalStickers">0</span> Stickers
+                    </span>
+                    <span class="stat-item">
+                        <span class="stat-icon">⬇️</span>
+                        <span id="totalDownloads">0</span> Downloads
+                    </span>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading-state" id="loadingState">
+                <div class="loading-spinner"></div>
+                <p>Loading stickers...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <span class="empty-icon">🎨</span>
+                <h2>No Stickers Yet!</h2>
+                <p>Be the first to create a Y2K mood sticker!</p>
+                <a href="landing.html" class="btn-primary">Create Your First Sticker</a>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Sticker cards will be inserted here -->
+            </div>
+
+            <!-- Load More Button -->
+            <div class="load-more-section" id="loadMoreSection" style="display: none;">
+                <button class="btn-secondary" id="loadMoreBtn">
+                    Load More Stickers
+                </button>
+            </div>
+        </main>
+
+        <footer class="page-footer">
+            <p>Y2K Mood Stickers - Showcasing <span id="footerCount">0</span> creations! 💖</p>
+        </footer>
+    </div>
+
+    <!-- Sticker Detail Modal -->
+    <div class="modal" id="stickerModal">
+        <div class="modal-content large-modal">
+            <button class="modal-close" id="closeModal">×</button>
+            <div class="modal-body">
+                <div class="sticker-detail-grid">
+                    <div class="sticker-detail-image">
+                        <img id="modalStickerImage" src="" alt="Sticker">
+                    </div>
+                    <div class="sticker-detail-info">
+                        <h2>
+                            <span id="modalMoodEmoji">😊</span>
+                            <span id="modalMoodName">Mood Name</span>
+                        </h2>
+                        <div class="detail-section">
+                            <h3>Details</h3>
+                            <p><strong>Sticker ID:</strong> <span id="modalStickerId">#1</span></p>
+                            <p><strong>Created:</strong> <span id="modalCreatedAt">---</span></p>
+                            <p><strong>Downloads:</strong> <span id="modalDownloads">0</span></p>
+                            <p id="modalCustomText" style="display: none;"><strong>Custom Text:</strong> <span id="modalTextValue">---</span></p>
+                            <p id="modalUserName" style="display: none;"><strong>Created By:</strong> <span id="modalUserValue">---</span></p>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn-download" id="modalDownloadBtn">
+                                <span>⬇️</span> Download
+                            </button>
+                            <button class="btn-primary" id="modalCreateSimilarBtn">
+                                Create Similar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/gallery.js"></script>
+</body>
+</html>
