@@ -1,8 +1,8 @@
 // /public/js/sticker-result.js
 
 // ==================== CONFIGURATION ====================
-const API_BASE_URL = 'http://localhost:8000/api';
-const STORAGE_URL = 'http://localhost:8000/storage/stickers';
+const API_BASE_URL = window.location.origin + '/api';
+const STORAGE_URL = window.location.origin + '/storage/stickers';
 
 // ==================== STATE ====================
 let stickerData = null;
