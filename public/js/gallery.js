@@ -1,7 +1,7 @@
 // /public/js/gallery.js
 
 // ==================== CONFIGURATION ====================
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = window.location.origin + '/api';
 
 // ==================== STATE ====================
 let allStickers = [];
