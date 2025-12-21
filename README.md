@@ -2,6 +2,8 @@
 
 A nostalgic Y2K-themed web application that generates custom mood stickers with optional NFT minting capabilities.
 
+[Deloyed here](https://moodsticker-y2k-production.up.railway.app/views/landing.html)
+
 ![Y2K Stickers](https://img.shields.io/badge/Y2K-Vibes-ff00ff?style=for-the-badge)
 ![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?style=for-the-badge&logo=php)
 ![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite)
