@@ -18,3 +18,4 @@ logs/*.log
 
 # Ignore sensitive config (if you add passwords later)
 # config/secrets.php
+.env

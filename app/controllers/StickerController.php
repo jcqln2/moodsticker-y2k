@@ -2,14 +2,20 @@
 // app/controllers/StickerController.php
 // Handles sticker generation and management
 
+require_once __DIR__ . '/../services/OpenAIService.php';
+
+use App\Services\OpenAIService;
+
 class StickerController extends Controller {
     
     private $stickerModel;
     private $moodModel;
+    private $openAIService;
     
     public function __construct() {
         $this->stickerModel = $this->model('Sticker');
         $this->moodModel = $this->model('Mood');
+        $this->openAIService = new OpenAIService();
     }
     
     // GET /api/stickers - Get all stickers (gallery)
@@ -54,6 +60,66 @@ class StickerController extends Controller {
     }
     
     public function generate() {
+        $this->validateMethod(['POST']);
+        $rateLimiter = new RateLimiter();
+        $limitCheck = $rateLimiter->checkLimit();
+    
+        if (!$limitCheck['allowed']) {
+            $this->errorResponse($limitCheck['message'], 429);
+            return;
+            }
+        
+        try {
+            $input = $this->getJsonInput();
+            
+            if (!isset($input['mood_id'])) {
+                $this->errorResponse('mood_id is required', 400);
+            }
+            
+            $mood = $this->moodModel->getMoodById($input['mood_id']);
+            if (!$mood) {
+                $this->errorResponse('Invalid mood_id', 400);
+            }
+            
+            // NEW: Generate with OpenAI
+            $result = $this->openAIService->generateMoodSticker(
+                $mood['name'],
+                'y2k',
+                $input['custom_text'] ?? null
+            );
+            
+            if (!$result['success']) {
+                $this->errorResponse('Failed to generate sticker: ' . $result['error'], 500);
+            }
+            
+            // Download and save the image locally
+            $filename = $this->downloadAndSaveImage($result['url']);
+            
+            $stickerData = [
+                'mood_id' => (int)$input['mood_id'],
+                'user_name' => isset($input['user_name']) ? $this->sanitize($input['user_name']) : null,
+                'custom_text' => isset($input['custom_text']) ? $this->sanitize($input['custom_text']) : null,
+                'custom_color' => isset($input['custom_color']) ? $this->sanitize($input['custom_color']) : null,
+                'file_path' => $filename,
+            ];
+            
+            $stickerId = $this->stickerModel->createSticker($stickerData);
+            
+            if (!$stickerId) {
+                $this->errorResponse('Failed to create sticker', 500);
+            }
+            
+            $sticker = $this->stickerModel->getStickerWithMood($stickerId);
+            
+            $this->successResponse($sticker, 'Sticker generated successfully');
+            
+        } catch (Exception $e) {
+            $this->errorResponse($e->getMessage(), 500);
+        }
+    }
+    
+    // NEW: Add fallback method to use old GD generation
+    public function generateLegacy() {
         $this->validateMethod(['POST']);
         
         try {
@@ -141,7 +207,29 @@ class StickerController extends Controller {
         }
     }
     
-    // ==================== ENHANCED STICKER GENERATION ====================
+    // ==================== NEW: DOWNLOAD AND SAVE OPENAI IMAGE ====================
+    private function downloadAndSaveImage($url) {
+        $filename = 'sticker_' . time() . '_' . uniqid() . '.png';
+        $filepath = STORAGE_PATH . '/stickers/' . $filename;
+        
+        // Download the image from OpenAI
+        $imageData = file_get_contents($url);
+        
+        if ($imageData === false) {
+            throw new Exception('Failed to download image from OpenAI');
+        }
+        
+        // Save to local storage
+        $saved = file_put_contents($filepath, $imageData);
+        
+        if ($saved === false) {
+            throw new Exception('Failed to save image locally');
+        }
+        
+        return $filename;
+    }
+    
+    // ==================== LEGACY GD STICKER GENERATION (KEPT AS BACKUP) ====================
     private function generateStickerImage($mood, $data) {
         $filename = 'sticker_' . time() . '_' . uniqid() . '.png';
         $filepath = STORAGE_PATH . '/stickers/' . $filename;
@@ -208,7 +296,7 @@ class StickerController extends Controller {
         return $filename;
     }
     
-    // ==================== HELPER FUNCTIONS ====================
+    // ==================== HELPER FUNCTIONS (KEPT FOR LEGACY) ====================
     
     private function hexToRgb($hex) {
         $hex = str_replace('#', '', $hex);

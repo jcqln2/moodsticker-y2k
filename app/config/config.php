@@ -2,6 +2,32 @@
 // app/config/config.php
 // Main application configuration
 
+// Load .env file if it exists (for local development)
+if (file_exists(dirname(dirname(__DIR__)) . '/.env')) {
+    $lines = file(dirname(dirname(__DIR__)) . '/.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        // Skip comments and empty lines
+        if (strpos(trim($line), '#') === 0 || empty(trim($line))) {
+            continue;
+        }
+        
+        // Parse the line
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $key = trim($key);
+            $value = trim($value);
+            
+            // Remove quotes if present
+            $value = trim($value, '"\'');
+            
+            // Set environment variable
+            putenv("$key=$value");
+            $_ENV[$key] = $value;
+            $_SERVER[$key] = $value;
+        }
+    }
+}
+
 // Define root path
 define('ROOT_PATH', dirname(dirname(__DIR__)));
 define('APP_PATH', ROOT_PATH . '/app');
@@ -48,7 +74,10 @@ if (DEBUG_MODE) {
 // Timezone
 date_default_timezone_set('America/Toronto');
 
-// Autoloader for classes
+// Load Composer's autoloader
+require_once ROOT_PATH . '/vendor/autoload.php';
+
+// Autoloader for classes (fallback for non-namespaced classes)
 spl_autoload_register(function ($class) {
     $paths = [
         APP_PATH . '/core/',
