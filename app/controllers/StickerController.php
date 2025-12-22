@@ -3,6 +3,7 @@
 // Handles sticker generation and management
 
 require_once __DIR__ . '/../services/OpenAIService.php';
+require_once __DIR__ . '/../middleware/RateLimiter.php';  // ADD THIS LINE
 
 use App\Services\OpenAIService;
 
