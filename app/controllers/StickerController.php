@@ -661,4 +661,83 @@ class StickerController extends Controller {
         
         $this->successResponse($openaiCheck, 'Environment variable debug info');
     }
+    
+    // Migration endpoint to update moods to Y2K themes
+    public function migrateY2KThemes() {
+        $this->validateMethod(['POST']);
+        
+        try {
+            require_once APP_PATH . '/config/database.php';
+            $db = Database::getInstance()->getConnection();
+            
+            // Check if old moods exist
+            $oldMoods = $db->query("SELECT COUNT(*) as count FROM moods WHERE name IN ('Happy & Energetic', 'Chill & Peaceful', 'Flirty & Fun', 'Thoughtful & Deep')")->fetch();
+            
+            if ($oldMoods['count'] > 0) {
+                // Delete old moods
+                $db->exec("DELETE FROM moods");
+                
+                // Insert new Y2K-themed moods
+                $newMoods = [
+                    ['Bratz Vibes', '✨', 'Totally Bratz! Bold fashion and attitude', '#FF69B4'],
+                    ['Lipgloss Queen', '💋', 'Shiny and glossy like your favorite lipgloss', '#FF1493'],
+                    ['Butterfly Clip Energy', '🦋', 'Colorful clips and playful accessories', '#FFB6C1'],
+                    ['90s Makeup Mood', '💄', 'Blue eyeshadow and glitter dreams', '#00CED1'],
+                    ['Spice Girls Style', '👑', 'Girl power and platform shoes', '#FFD700'],
+                    ['Clueless Chic', '👗', 'As if! Preppy and plaid perfection', '#FFD700'],
+                    ['Y2K Party', '🎊', 'Turn up the Y2K vibes!', '#FF00FF'],
+                    ['Glitter & Glam', '✨', 'All the sparkles and shine', '#FF69B4'],
+                ];
+                
+                $stmt = $db->prepare("INSERT INTO moods (name, emoji, description, color) VALUES (?, ?, ?, ?)");
+                
+                foreach ($newMoods as $mood) {
+                    $stmt->execute($mood);
+                }
+                
+                $this->successResponse([
+                    'migrated' => true,
+                    'moods_added' => count($newMoods),
+                    'message' => 'Successfully migrated to Y2K themes'
+                ], 'Migration complete');
+            } else {
+                // Check if new moods already exist
+                $newMoodsCount = $db->query("SELECT COUNT(*) as count FROM moods WHERE name IN ('Bratz Vibes', 'Lipgloss Queen', 'Butterfly Clip Energy')")->fetch();
+                
+                if ($newMoodsCount['count'] > 0) {
+                    $this->successResponse([
+                        'migrated' => false,
+                        'message' => 'Y2K themes already exist, no migration needed'
+                    ], 'Already migrated');
+                } else {
+                    // No moods, insert new ones
+                    $newMoods = [
+                        ['Bratz Vibes', '✨', 'Totally Bratz! Bold fashion and attitude', '#FF69B4'],
+                        ['Lipgloss Queen', '💋', 'Shiny and glossy like your favorite lipgloss', '#FF1493'],
+                        ['Butterfly Clip Energy', '🦋', 'Colorful clips and playful accessories', '#FFB6C1'],
+                        ['90s Makeup Mood', '💄', 'Blue eyeshadow and glitter dreams', '#00CED1'],
+                        ['Spice Girls Style', '👑', 'Girl power and platform shoes', '#FFD700'],
+                        ['Clueless Chic', '👗', 'As if! Preppy and plaid perfection', '#FFD700'],
+                        ['Y2K Party', '🎊', 'Turn up the Y2K vibes!', '#FF00FF'],
+                        ['Glitter & Glam', '✨', 'All the sparkles and shine', '#FF69B4'],
+                    ];
+                    
+                    $stmt = $db->prepare("INSERT INTO moods (name, emoji, description, color) VALUES (?, ?, ?, ?)");
+                    
+                    foreach ($newMoods as $mood) {
+                        $stmt->execute($mood);
+                    }
+                    
+                    $this->successResponse([
+                        'migrated' => true,
+                        'moods_added' => count($newMoods),
+                        'message' => 'Y2K themes inserted'
+                    ], 'Migration complete');
+                }
+            }
+            
+        } catch (Exception $e) {
+            $this->errorResponse('Migration failed: ' . $e->getMessage(), 500);
+        }
+    }
 }

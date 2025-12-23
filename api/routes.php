@@ -25,6 +25,8 @@ $routes = [
         
         // Debug endpoint (temporary)
         'debug/env' => 'StickerController@debugEnv',
+        // Migration endpoint (temporary)
+        'migrate/y2k-themes' => 'StickerController@migrateY2KThemes',
     ],
     'POST' => [
         // Stickers
