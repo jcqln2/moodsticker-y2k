@@ -65,6 +65,12 @@ class OpenAIService {
             $apiKey = getenv('OPENAI_API_KEY');
         }
         
+        // Check if Railway shared variable syntax is present (unresolved template)
+        if (!empty($apiKey) && (strpos($apiKey, '${{') !== false || strpos($apiKey, 'shared.') !== false)) {
+            error_log('[WARNING] Railway shared variable appears unresolved: ' . substr($apiKey, 0, 50));
+            $apiKey = null; // Treat as not found
+        }
+        
         // #region agent log
         $resultInfo = [
             'apiKey_found' => !empty($apiKey),
@@ -88,18 +94,35 @@ class OpenAIService {
     }
     
     private function getApiKeyError() {
+        // Check if Railway shared variable syntax is present (unresolved template)
+        $hasUnresolvedTemplate = false;
+        $templateValue = null;
+        if (isset($_SERVER['OPENAI_API_KEY']) && (strpos($_SERVER['OPENAI_API_KEY'], '${{') !== false || strpos($_SERVER['OPENAI_API_KEY'], 'shared.') !== false)) {
+            $hasUnresolvedTemplate = true;
+            $templateValue = $_SERVER['OPENAI_API_KEY'];
+        } elseif (isset($_ENV['OPENAI_API_KEY']) && (strpos($_ENV['OPENAI_API_KEY'], '${{') !== false || strpos($_ENV['OPENAI_API_KEY'], 'shared.') !== false)) {
+            $hasUnresolvedTemplate = true;
+            $templateValue = $_ENV['OPENAI_API_KEY'];
+        } elseif (getenv('OPENAI_API_KEY') !== false && (strpos(getenv('OPENAI_API_KEY'), '${{') !== false || strpos(getenv('OPENAI_API_KEY'), 'shared.') !== false)) {
+            $hasUnresolvedTemplate = true;
+            $templateValue = getenv('OPENAI_API_KEY');
+        }
+        
         // Check for common variations of the variable name
         $possibleKeys = ['OPENAI_API_KEY', 'openai_api_key', 'OpenAI_Api_Key'];
         $foundVariations = [];
         foreach ($possibleKeys as $keyVar) {
             if (!empty($_SERVER[$keyVar])) {
-                $foundVariations[] = "SERVER[$keyVar]=" . strlen($_SERVER[$keyVar]);
+                $val = $_SERVER[$keyVar];
+                $foundVariations[] = "SERVER[$keyVar]=" . strlen($val) . (strpos($val, '${{') !== false ? '(unresolved)' : '');
             }
             if (!empty($_ENV[$keyVar])) {
-                $foundVariations[] = "ENV[$keyVar]=" . strlen($_ENV[$keyVar]);
+                $val = $_ENV[$keyVar];
+                $foundVariations[] = "ENV[$keyVar]=" . strlen($val) . (strpos($val, '${{') !== false ? '(unresolved)' : '');
             }
             if (getenv($keyVar) !== false && !empty(getenv($keyVar))) {
-                $foundVariations[] = "getenv($keyVar)=" . strlen(getenv($keyVar));
+                $val = getenv($keyVar);
+                $foundVariations[] = "getenv($keyVar)=" . strlen($val) . (strpos($val, '${{') !== false ? '(unresolved)' : '');
             }
         }
         
@@ -108,8 +131,14 @@ class OpenAIService {
             return stripos($k, 'OPENAI') !== false || stripos($k, 'API') !== false; 
         });
         
-        $debugMsg = 'OPENAI_API_KEY not found. ' .
-                   'ENV=' . (isset($_ENV['OPENAI_API_KEY']) ? 'set(' . strlen($_ENV['OPENAI_API_KEY']) . ')' : 'not_set') . 
+        $debugMsg = 'OPENAI_API_KEY not found. ';
+        
+        if ($hasUnresolvedTemplate) {
+            $debugMsg .= 'RAILWAY SHARED VARIABLE UNRESOLVED: The variable exists but contains Railway template syntax (' . substr($templateValue, 0, 50) . '). ';
+            $debugMsg .= 'SOLUTION: In Railway dashboard, go to your service → Variables tab → Click on OPENAI_API_KEY → Replace "${{shared.OPENAI_API_KEY}}" with the actual API key value (starts with sk-). ';
+        }
+        
+        $debugMsg .= 'ENV=' . (isset($_ENV['OPENAI_API_KEY']) ? 'set(' . strlen($_ENV['OPENAI_API_KEY']) . ')' : 'not_set') . 
                    ', SERVER=' . (isset($_SERVER['OPENAI_API_KEY']) ? 'set(' . strlen($_SERVER['OPENAI_API_KEY']) . ')' : 'not_set') . 
                    ', getenv=' . (getenv('OPENAI_API_KEY') !== false ? 'set(' . strlen(getenv('OPENAI_API_KEY')) . ')' : 'not_set') .
                    ', vars_order=' . ini_get('variables_order') .
