@@ -29,14 +29,15 @@ if (file_exists(dirname(dirname(__DIR__)) . '/.env')) {
 }
 
 // Sync $_SERVER environment variables to $_ENV
-// This is critical for Railway and other platforms where $_ENV might not be auto-populated
-// Railway exposes environment variables via $_SERVER, but $_ENV might not be populated
+// This is critical for Railway, Render, and other platforms where $_ENV might not be auto-populated
+// These platforms expose environment variables via $_SERVER, but $_ENV might not be populated
 $isRailway = getenv('RAILWAY_ENVIRONMENT') || getenv('RAILWAY_STATIC_URL') || !empty($_SERVER['RAILWAY_ENVIRONMENT']) || !empty($_SERVER['RAILWAY_STATIC_URL']);
+$isRender = getenv('RENDER') || !empty($_SERVER['RENDER']) || getenv('RENDER_SERVICE_NAME') || !empty($_SERVER['RENDER_SERVICE_NAME']);
 // Check if we're in production (not local development)
-$isProduction = $isRailway || (!file_exists(dirname(dirname(__DIR__)) . '/.env'));
+$isProduction = $isRailway || $isRender || (!file_exists(dirname(dirname(__DIR__)) . '/.env'));
 
-// Always sync environment variables in production or if Railway is detected
-if ($isRailway || $isProduction) {
+// Always sync environment variables in production or if Railway/Render is detected
+if ($isRailway || $isRender || $isProduction) {
     $excludedKeys = ['REQUEST_METHOD', 'REQUEST_URI', 'SCRIPT_NAME', 'QUERY_STRING', 'SERVER_NAME', 'SERVER_PORT', 'SERVER_PROTOCOL', 'GATEWAY_INTERFACE', 'SERVER_SOFTWARE', 'PATH', 'HOME', 'USER', 'SHELL', 'PWD', 'SHLVL', '_', 'DOCUMENT_ROOT', 'SCRIPT_FILENAME', 'SERVER_ADDR', 'SERVER_SOFTWARE', 'REMOTE_ADDR', 'REMOTE_PORT', 'CONTENT_TYPE', 'CONTENT_LENGTH'];
     
     foreach ($_SERVER as $key => $value) {
@@ -94,10 +95,17 @@ define('APP_NAME', 'Y2K Mood Sticker Generator');
 define('APP_VERSION', '1.0.0');
 define('DEBUG_MODE', getenv('RAILWAY_ENVIRONMENT') ? false : true); // Production mode on Railway
 
-// URL Configuration - use Railway URL if available
-$baseUrl = getenv('RAILWAY_STATIC_URL') 
-    ? 'https://' . getenv('RAILWAY_STATIC_URL')
-    : 'http://localhost:8000';
+// URL Configuration - use Railway or Render URL if available
+$baseUrl = null;
+if (getenv('RAILWAY_STATIC_URL')) {
+    $baseUrl = 'https://' . getenv('RAILWAY_STATIC_URL');
+} elseif (getenv('RENDER_EXTERNAL_URL')) {
+    $baseUrl = getenv('RENDER_EXTERNAL_URL');
+} elseif (!empty($_SERVER['RENDER_EXTERNAL_URL'])) {
+    $baseUrl = $_SERVER['RENDER_EXTERNAL_URL'];
+} else {
+    $baseUrl = 'http://localhost:8000';
+}
 define('BASE_URL', $baseUrl);
 define('API_URL', BASE_URL . '/api');
 

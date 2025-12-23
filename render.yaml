@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: moodsticker-y2k
+    env: php
+    buildCommand: composer install && php setup-database.php
+    startCommand: php -S 0.0.0.0:$PORT -t public router.php
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: PHP_VERSION
+        value: 8.3
+    healthCheckPath: /views/landing.html
+
