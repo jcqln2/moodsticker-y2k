@@ -171,10 +171,25 @@ async function generateSticker() {
             body: JSON.stringify(stickerData)
         });
         
-        const result = await response.json();
+        // Get response text first to handle both JSON and non-JSON responses
+        const responseText = await response.text();
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (e) {
+            // If response isn't JSON, show the raw response
+            console.error('Non-JSON response:', responseText);
+            throw new Error('Server returned invalid response: ' + responseText.substring(0, 200));
+        }
+        
+        // Log full response for debugging
+        console.log('API Response:', result);
         
         if (!result.success) {
-            throw new Error(result.error || 'Failed to generate sticker');
+            // Include debug info if available
+            const errorMsg = result.error || 'Failed to generate sticker';
+            const debugInfo = result.debug ? '\nDebug: ' + JSON.stringify(result.debug, null, 2) : '';
+            throw new Error(errorMsg + debugInfo);
         }
         
         console.log('✅ Sticker generated!', result.data);

@@ -92,18 +92,28 @@ class StickerController extends Controller {
             } catch (Exception $serviceException) {
                 // If service constructor fails (API key issue), include debug info
                 $errorMsg = $serviceException->getMessage();
-                if (strpos($errorMsg, 'OPENAI_API_KEY') !== false) {
+                if (strpos($errorMsg, 'OPENAI_API_KEY') !== false || strpos($errorMsg, 'API key') !== false) {
                     $debugInfo = [
                         'error' => $errorMsg,
                         'debug' => [
                             'has_ENV' => isset($_ENV['OPENAI_API_KEY']),
+                            'ENV_length' => isset($_ENV['OPENAI_API_KEY']) ? strlen($_ENV['OPENAI_API_KEY']) : 0,
                             'has_SERVER' => isset($_SERVER['OPENAI_API_KEY']),
+                            'SERVER_length' => isset($_SERVER['OPENAI_API_KEY']) ? strlen($_SERVER['OPENAI_API_KEY']) : 0,
                             'has_getenv' => getenv('OPENAI_API_KEY') !== false,
+                            'getenv_length' => getenv('OPENAI_API_KEY') !== false ? strlen(getenv('OPENAI_API_KEY')) : 0,
                             'variables_order' => ini_get('variables_order'),
                         ]
                     ];
-                    $this->errorResponse(json_encode($debugInfo, JSON_PRETTY_PRINT), 500);
-                    return;
+                    // Return as structured JSON, not double-encoded
+                    http_response_code(500);
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'success' => false,
+                        'error' => $errorMsg,
+                        'debug' => $debugInfo['debug']
+                    ], JSON_PRETTY_PRINT);
+                    exit;
                 }
                 throw $serviceException; // Re-throw if not API key related
             }
@@ -111,17 +121,28 @@ class StickerController extends Controller {
             if (!$result['success']) {
                 $errorMsg = $result['error'];
                 // Check if error is about API key
-                if (strpos($errorMsg, 'API key') !== false || strpos($errorMsg, 'Incorrect API key') !== false) {
+                if (strpos($errorMsg, 'API key') !== false || strpos($errorMsg, 'Incorrect API key') !== false || strpos($errorMsg, 'OPENAI_API_KEY') !== false) {
                     $debugInfo = [
                         'error' => $errorMsg,
                         'debug' => [
                             'has_ENV' => isset($_ENV['OPENAI_API_KEY']),
+                            'ENV_length' => isset($_ENV['OPENAI_API_KEY']) ? strlen($_ENV['OPENAI_API_KEY']) : 0,
                             'has_SERVER' => isset($_SERVER['OPENAI_API_KEY']),
+                            'SERVER_length' => isset($_SERVER['OPENAI_API_KEY']) ? strlen($_SERVER['OPENAI_API_KEY']) : 0,
                             'has_getenv' => getenv('OPENAI_API_KEY') !== false,
+                            'getenv_length' => getenv('OPENAI_API_KEY') !== false ? strlen(getenv('OPENAI_API_KEY')) : 0,
                             'variables_order' => ini_get('variables_order'),
                         ]
                     ];
-                    $this->errorResponse(json_encode($debugInfo, JSON_PRETTY_PRINT), 500);
+                    // Return as structured JSON, not double-encoded
+                    http_response_code(500);
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'success' => false,
+                        'error' => $errorMsg,
+                        'debug' => $debugInfo['debug']
+                    ], JSON_PRETTY_PRINT);
+                    exit;
                 } else {
                     $this->errorResponse('Failed to generate sticker: ' . $errorMsg, 500);
                 }
@@ -152,20 +173,42 @@ class StickerController extends Controller {
         } catch (Exception $e) {
             // Include debug info in error response for troubleshooting
             $errorMsg = $e->getMessage();
-            if (strpos($errorMsg, 'OPENAI_API_KEY') !== false) {
+            if (strpos($errorMsg, 'OPENAI_API_KEY') !== false || strpos($errorMsg, 'API key') !== false) {
                 // Add additional debug context for API key issues
                 $debugInfo = [
                     'error' => $errorMsg,
                     'debug' => [
                         'has_ENV' => isset($_ENV['OPENAI_API_KEY']),
+                        'ENV_length' => isset($_ENV['OPENAI_API_KEY']) ? strlen($_ENV['OPENAI_API_KEY']) : 0,
                         'has_SERVER' => isset($_SERVER['OPENAI_API_KEY']),
+                        'SERVER_length' => isset($_SERVER['OPENAI_API_KEY']) ? strlen($_SERVER['OPENAI_API_KEY']) : 0,
                         'has_getenv' => getenv('OPENAI_API_KEY') !== false,
+                        'getenv_length' => getenv('OPENAI_API_KEY') !== false ? strlen(getenv('OPENAI_API_KEY')) : 0,
                         'variables_order' => ini_get('variables_order'),
                     ]
                 ];
-                $this->errorResponse(json_encode($debugInfo, JSON_PRETTY_PRINT), 500);
+                // Return as structured JSON, not double-encoded
+                http_response_code(500);
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => false,
+                    'error' => $errorMsg,
+                    'debug' => $debugInfo['debug']
+                ], JSON_PRETTY_PRINT);
+                exit;
             } else {
-                $this->errorResponse($errorMsg, 500);
+                // For other errors, include stack trace in debug mode
+                $response = [
+                    'success' => false,
+                    'error' => $errorMsg
+                ];
+                if (defined('DEBUG_MODE') && DEBUG_MODE) {
+                    $response['trace'] = $e->getTraceAsString();
+                }
+                http_response_code(500);
+                header('Content-Type: application/json');
+                echo json_encode($response, JSON_PRETTY_PRINT);
+                exit;
             }
         }
     }

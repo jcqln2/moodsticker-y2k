@@ -2,6 +2,22 @@
 // api/index.php
 // REST API entry point
 
+// Set error handler to catch fatal errors
+register_shutdown_function(function() {
+    $error = error_get_last();
+    if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+        http_response_code(500);
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => false,
+            'error' => 'Fatal error: ' . $error['message'],
+            'file' => $error['file'],
+            'line' => $error['line']
+        ], JSON_PRETTY_PRINT);
+        exit;
+    }
+});
+
 // Load configuration
 require_once dirname(__DIR__) . '/app/config/config.php';
 require_once APP_PATH . '/config/database.php';
