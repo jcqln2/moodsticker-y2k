@@ -567,11 +567,26 @@ class StickerController extends Controller {
         $serverKeys = array_keys($_SERVER);
         $allEnvKeys = array_unique(array_merge($envKeys, $serverKeys));
         
+        // Filter out HTTP headers and server vars to show only actual environment variables
+        $actualEnvVars = array_filter($allEnvKeys, function($key) {
+            return substr($key, 0, 5) !== 'HTTP_' && 
+                   !in_array($key, ['REQUEST_METHOD', 'REQUEST_URI', 'SCRIPT_NAME', 'QUERY_STRING', 
+                                    'SERVER_NAME', 'SERVER_PORT', 'SERVER_PROTOCOL', 'GATEWAY_INTERFACE', 
+                                    'SERVER_SOFTWARE', 'DOCUMENT_ROOT', 'SCRIPT_FILENAME', 'SERVER_ADDR', 
+                                    'REMOTE_ADDR', 'REMOTE_PORT', 'CONTENT_TYPE', 'CONTENT_LENGTH', 'PATH', 
+                                    'HOME', 'USER', 'SHELL', 'PWD', 'SHLVL', '_']);
+        });
+        
         // Filter to show only keys that might be relevant (OPENAI, RAILWAY, etc.)
-        $relevantKeys = array_filter($allEnvKeys, function($key) {
+        $relevantKeys = array_filter($actualEnvVars, function($key) {
             return stripos($key, 'OPENAI') !== false || 
                    stripos($key, 'RAILWAY') !== false ||
                    stripos($key, 'API') !== false;
+        });
+        
+        // Get all Railway-related variables
+        $railwayVars = array_filter($actualEnvVars, function($key) {
+            return stripos($key, 'RAILWAY') !== false;
         });
         
         // Check each source for OPENAI_API_KEY
@@ -588,8 +603,20 @@ class StickerController extends Controller {
                 'getenv_empty' => getenv('OPENAI_API_KEY') !== false ? empty(getenv('OPENAI_API_KEY')) : true,
             ],
             'variables_order' => ini_get('variables_order'),
+            'railway_detected' => !empty($railwayVars),
+            'railway_vars' => array_values($railwayVars),
             'relevant_env_keys' => array_values($relevantKeys),
-            'all_env_key_count' => count($allEnvKeys),
+            'all_env_keys_sample' => array_slice(array_values($actualEnvVars), 0, 20), // First 20 env vars
+            'all_env_key_count' => count($actualEnvVars),
+            'setup_instructions' => [
+                '1' => 'Go to Railway Dashboard → Your Service → Variables tab',
+                '2' => 'Click "New Variable" or "Add Variable"',
+                '3' => 'Set Name: OPENAI_API_KEY (exact, no spaces)',
+                '4' => 'Set Value: your OpenAI API key (starts with sk-)',
+                '5' => 'Make sure it\'s set at the SERVICE level, not just as a shared variable',
+                '6' => 'If using shared variables, ensure they are linked to this service',
+                '7' => 'After adding, redeploy the service for changes to take effect'
+            ]
         ];
         
         $this->successResponse($openaiCheck, 'Environment variable debug info');
