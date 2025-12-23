@@ -41,8 +41,25 @@ try {
     
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode([
+    $errorMessage = $e->getMessage();
+    
+    // Always show error details for API key issues or if DEBUG_MODE is on
+    $showDetails = DEBUG_MODE || strpos($errorMessage, 'OPENAI_API_KEY') !== false || strpos($errorMessage, 'API key') !== false;
+    
+    $response = [
         'success' => false,
-        'error' => DEBUG_MODE ? $e->getMessage() : 'Internal server error'
-    ]);
+        'error' => $showDetails ? $errorMessage : 'Internal server error'
+    ];
+    
+    // Add debug info for API key errors
+    if (strpos($errorMessage, 'OPENAI_API_KEY') !== false) {
+        $response['debug'] = [
+            'has_ENV' => isset($_ENV['OPENAI_API_KEY']),
+            'has_SERVER' => isset($_SERVER['OPENAI_API_KEY']),
+            'has_getenv' => getenv('OPENAI_API_KEY') !== false,
+            'variables_order' => ini_get('variables_order'),
+        ];
+    }
+    
+    echo json_encode($response, JSON_PRETTY_PRINT);
 }

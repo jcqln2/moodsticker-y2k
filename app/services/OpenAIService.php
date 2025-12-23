@@ -5,8 +5,25 @@ use OpenAI;
 
 class OpenAIService {
     private $client;
+    private $apiKey;
     
     public function __construct() {
+        // Don't initialize client here - do it lazily when needed
+        // This allows the controller to be instantiated even if API key is missing
+    }
+    
+    private function getClient() {
+        if ($this->client === null) {
+            $this->apiKey = $this->resolveApiKey();
+            if (empty($this->apiKey)) {
+                throw new \Exception($this->getApiKeyError());
+            }
+            $this->client = OpenAI::client($this->apiKey);
+        }
+        return $this->client;
+    }
+    
+    private function resolveApiKey() {
         // #region agent log
         $debugInfo = [
             'has_ENV' => isset($_ENV['OPENAI_API_KEY']),
@@ -19,9 +36,9 @@ class OpenAIService {
             'variables_order' => ini_get('variables_order'),
             'all_SERVER_keys_with_OPENAI' => array_filter(array_keys($_SERVER), function($k) { return stripos($k, 'OPENAI') !== false; }),
         ];
-        error_log('[DEBUG] OpenAIService constructor - env check: ' . json_encode($debugInfo));
+        error_log('[DEBUG] OpenAIService resolveApiKey - env check: ' . json_encode($debugInfo));
         $logData = [
-            'location' => 'OpenAIService.php:9',
+            'location' => 'OpenAIService.php:resolveApiKey',
             'message' => 'Checking environment variable sources',
             'data' => $debugInfo,
             'timestamp' => time() * 1000,
@@ -54,9 +71,9 @@ class OpenAIService {
             'apiKey_length' => $apiKey ? strlen($apiKey) : 0,
             'apiKey_preview' => $apiKey ? substr($apiKey, 0, 10) . '...' : 'null',
         ];
-        error_log('[DEBUG] OpenAIService constructor - API key resolution: ' . json_encode($resultInfo));
+        error_log('[DEBUG] OpenAIService resolveApiKey - API key resolution: ' . json_encode($resultInfo));
         $logData2 = [
-            'location' => 'OpenAIService.php:42',
+            'location' => 'OpenAIService.php:resolveApiKey',
             'message' => 'API key resolution result',
             'data' => $resultInfo,
             'timestamp' => time() * 1000,
@@ -67,39 +84,39 @@ class OpenAIService {
         @file_put_contents($logPath, json_encode($logData2) . "\n", FILE_APPEND);
         // #endregion
         
-        if (empty($apiKey)) {
-            // Check for common variations of the variable name
-            $possibleKeys = ['OPENAI_API_KEY', 'openai_api_key', 'OpenAI_Api_Key'];
-            $foundVariations = [];
-            foreach ($possibleKeys as $keyVar) {
-                if (!empty($_SERVER[$keyVar])) {
-                    $foundVariations[] = "SERVER[$keyVar]=" . strlen($_SERVER[$keyVar]);
-                }
-                if (!empty($_ENV[$keyVar])) {
-                    $foundVariations[] = "ENV[$keyVar]=" . strlen($_ENV[$keyVar]);
-                }
-                if (getenv($keyVar) !== false && !empty(getenv($keyVar))) {
-                    $foundVariations[] = "getenv($keyVar)=" . strlen(getenv($keyVar));
-                }
+        return $apiKey;
+    }
+    
+    private function getApiKeyError() {
+        // Check for common variations of the variable name
+        $possibleKeys = ['OPENAI_API_KEY', 'openai_api_key', 'OpenAI_Api_Key'];
+        $foundVariations = [];
+        foreach ($possibleKeys as $keyVar) {
+            if (!empty($_SERVER[$keyVar])) {
+                $foundVariations[] = "SERVER[$keyVar]=" . strlen($_SERVER[$keyVar]);
             }
-            
-            // Get all keys containing "OPENAI" or "API" for debugging
-            $allOpenaiKeys = array_filter(array_keys($_SERVER), function($k) { 
-                return stripos($k, 'OPENAI') !== false || stripos($k, 'API') !== false; 
-            });
-            
-            $debugMsg = 'OPENAI_API_KEY not found. ' .
-                       'ENV=' . (isset($_ENV['OPENAI_API_KEY']) ? 'set(' . strlen($_ENV['OPENAI_API_KEY']) . ')' : 'not_set') . 
-                       ', SERVER=' . (isset($_SERVER['OPENAI_API_KEY']) ? 'set(' . strlen($_SERVER['OPENAI_API_KEY']) . ')' : 'not_set') . 
-                       ', getenv=' . (getenv('OPENAI_API_KEY') !== false ? 'set(' . strlen(getenv('OPENAI_API_KEY')) . ')' : 'not_set') .
-                       ', vars_order=' . ini_get('variables_order') .
-                       (count($foundVariations) > 0 ? ', found_variations=' . implode(',', $foundVariations) : '') .
-                       (count($allOpenaiKeys) > 0 ? ', similar_keys=' . implode(',', array_slice($allOpenaiKeys, 0, 10)) : '');
-            error_log('[ERROR] ' . $debugMsg);
-            throw new \Exception($debugMsg);
+            if (!empty($_ENV[$keyVar])) {
+                $foundVariations[] = "ENV[$keyVar]=" . strlen($_ENV[$keyVar]);
+            }
+            if (getenv($keyVar) !== false && !empty(getenv($keyVar))) {
+                $foundVariations[] = "getenv($keyVar)=" . strlen(getenv($keyVar));
+            }
         }
         
-        $this->client = OpenAI::client($apiKey);
+        // Get all keys containing "OPENAI" or "API" for debugging
+        $allOpenaiKeys = array_filter(array_keys($_SERVER), function($k) { 
+            return stripos($k, 'OPENAI') !== false || stripos($k, 'API') !== false; 
+        });
+        
+        $debugMsg = 'OPENAI_API_KEY not found. ' .
+                   'ENV=' . (isset($_ENV['OPENAI_API_KEY']) ? 'set(' . strlen($_ENV['OPENAI_API_KEY']) . ')' : 'not_set') . 
+                   ', SERVER=' . (isset($_SERVER['OPENAI_API_KEY']) ? 'set(' . strlen($_SERVER['OPENAI_API_KEY']) . ')' : 'not_set') . 
+                   ', getenv=' . (getenv('OPENAI_API_KEY') !== false ? 'set(' . strlen(getenv('OPENAI_API_KEY')) . ')' : 'not_set') .
+                   ', vars_order=' . ini_get('variables_order') .
+                   (count($foundVariations) > 0 ? ', found_variations=' . implode(',', $foundVariations) : '') .
+                   (count($allOpenaiKeys) > 0 ? ', similar_keys=' . implode(',', array_slice($allOpenaiKeys, 0, 10)) : '');
+        error_log('[ERROR] ' . $debugMsg);
+        return $debugMsg;
     }
     
     public function generateMoodSticker($mood, $style = 'y2k', $customText = null) {
@@ -127,7 +144,8 @@ class OpenAIService {
         $prompt = $this->buildPrompt($mood, $style, $customText);
         
         try {
-            $response = $this->client->images()->create([
+            $client = $this->getClient();
+            $response = $client->images()->create([
                 'model' => 'dall-e-3',
                 'prompt' => $prompt,
                 'n' => 1,
