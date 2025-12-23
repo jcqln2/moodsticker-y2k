@@ -590,32 +590,63 @@ class StickerController extends Controller {
         });
         
         // Check each source for OPENAI_API_KEY
+        // Also check for any keys that contain "OPENAI" or "API" (case-insensitive)
+        $allKeysWithOpenAI = array_filter($actualEnvVars, function($key) {
+            return stripos($key, 'OPENAI') !== false;
+        });
+        
+        // Check for keys that start with "SK" (OpenAI keys start with sk-)
+        $keysStartingWithSK = array_filter($actualEnvVars, function($key) {
+            return stripos($key, 'SK') === 0 || stripos($key, 'SECRET') !== false;
+        });
+        
+        // Get actual values (masked) for debugging - show first few chars
+        $openaiKeyValues = [];
+        foreach ($allKeysWithOpenAI as $key) {
+            $val = isset($_SERVER[$key]) ? $_SERVER[$key] : (isset($_ENV[$key]) ? $_ENV[$key] : getenv($key));
+            if ($val !== false) {
+                $openaiKeyValues[$key] = [
+                    'length' => strlen($val),
+                    'preview' => substr($val, 0, 20) . '...',
+                    'contains_template' => strpos($val, '${{') !== false || strpos($val, 'shared.') !== false
+                ];
+            }
+        }
+        
         $openaiCheck = [
             'OPENAI_API_KEY' => [
                 'in_ENV' => isset($_ENV['OPENAI_API_KEY']),
                 'ENV_length' => isset($_ENV['OPENAI_API_KEY']) ? strlen($_ENV['OPENAI_API_KEY']) : 0,
                 'ENV_empty' => isset($_ENV['OPENAI_API_KEY']) ? empty($_ENV['OPENAI_API_KEY']) : true,
+                'ENV_value_preview' => isset($_ENV['OPENAI_API_KEY']) ? substr($_ENV['OPENAI_API_KEY'], 0, 20) . '...' : 'not_set',
                 'in_SERVER' => isset($_SERVER['OPENAI_API_KEY']),
                 'SERVER_length' => isset($_SERVER['OPENAI_API_KEY']) ? strlen($_SERVER['OPENAI_API_KEY']) : 0,
                 'SERVER_empty' => isset($_SERVER['OPENAI_API_KEY']) ? empty($_SERVER['OPENAI_API_KEY']) : true,
+                'SERVER_value_preview' => isset($_SERVER['OPENAI_API_KEY']) ? substr($_SERVER['OPENAI_API_KEY'], 0, 20) . '...' : 'not_set',
                 'getenv_result' => getenv('OPENAI_API_KEY') !== false,
                 'getenv_length' => getenv('OPENAI_API_KEY') !== false ? strlen(getenv('OPENAI_API_KEY')) : 0,
                 'getenv_empty' => getenv('OPENAI_API_KEY') !== false ? empty(getenv('OPENAI_API_KEY')) : true,
+                'getenv_value_preview' => getenv('OPENAI_API_KEY') !== false ? substr(getenv('OPENAI_API_KEY'), 0, 20) . '...' : 'not_set',
             ],
             'variables_order' => ini_get('variables_order'),
             'railway_detected' => !empty($railwayVars),
             'railway_vars' => array_values($railwayVars),
             'relevant_env_keys' => array_values($relevantKeys),
-            'all_env_keys_sample' => array_slice(array_values($actualEnvVars), 0, 20), // First 20 env vars
+            'all_keys_with_openai' => array_values($allKeysWithOpenAI),
+            'openai_key_values' => $openaiKeyValues,
+            'keys_starting_with_sk' => array_values($keysStartingWithSK),
+            'all_env_keys_sample' => array_slice(array_values($actualEnvVars), 0, 30), // First 30 env vars
             'all_env_key_count' => count($actualEnvVars),
+            'all_env_keys_full' => array_values($actualEnvVars), // ALL env vars for debugging
             'setup_instructions' => [
                 '1' => 'Go to Railway Dashboard → Your Service → Variables tab',
                 '2' => 'Click "New Variable" or "Add Variable"',
-                '3' => 'Set Name: OPENAI_API_KEY (exact, no spaces)',
+                '3' => 'Set Name: OPENAI_API_KEY (exact, no spaces, case-sensitive)',
                 '4' => 'Set Value: your OpenAI API key (starts with sk-)',
                 '5' => 'Make sure it\'s set at the SERVICE level, not just as a shared variable',
-                '6' => 'If using shared variables, ensure they are linked to this service',
-                '7' => 'After adding, redeploy the service for changes to take effect'
+                '6' => 'VERIFY: After saving, check that the value shows as masked (****) not as ${{shared.OPENAI_API_KEY}}',
+                '7' => 'After adding, manually trigger a redeploy (Deployments tab → Redeploy)',
+                '8' => 'Wait for deployment to complete, then check this debug endpoint again'
             ]
         ];
         
