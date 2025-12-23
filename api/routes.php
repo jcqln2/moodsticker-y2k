@@ -22,6 +22,9 @@ $routes = [
         'nft/wallet/(.+)' => 'NFTController@wallet',
         'nft/pending' => 'NFTController@pending',
         'nft/stats' => 'NFTController@stats',
+        
+        // Debug endpoint (temporary)
+        'debug/env' => 'StickerController@debugEnv',
     ],
     'POST' => [
         // Stickers

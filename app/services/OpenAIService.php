@@ -7,11 +7,122 @@ class OpenAIService {
     private $client;
     
     public function __construct() {
-        $apiKey = $_ENV['OPENAI_API_KEY'] ?? getenv('OPENAI_API_KEY');
+        // #region agent log
+        $debugInfo = [
+            'has_ENV' => isset($_ENV['OPENAI_API_KEY']),
+            'ENV_value_length' => isset($_ENV['OPENAI_API_KEY']) ? strlen($_ENV['OPENAI_API_KEY']) : 0,
+            'ENV_value_empty' => isset($_ENV['OPENAI_API_KEY']) ? empty($_ENV['OPENAI_API_KEY']) : true,
+            'getenv_result' => getenv('OPENAI_API_KEY') !== false,
+            'getenv_length' => getenv('OPENAI_API_KEY') !== false ? strlen(getenv('OPENAI_API_KEY')) : 0,
+            'has_SERVER' => isset($_SERVER['OPENAI_API_KEY']),
+            'SERVER_value_length' => isset($_SERVER['OPENAI_API_KEY']) ? strlen($_SERVER['OPENAI_API_KEY']) : 0,
+            'variables_order' => ini_get('variables_order'),
+            'all_SERVER_keys_with_OPENAI' => array_filter(array_keys($_SERVER), function($k) { return stripos($k, 'OPENAI') !== false; }),
+        ];
+        error_log('[DEBUG] OpenAIService constructor - env check: ' . json_encode($debugInfo));
+        $logData = [
+            'location' => 'OpenAIService.php:9',
+            'message' => 'Checking environment variable sources',
+            'data' => $debugInfo,
+            'timestamp' => time() * 1000,
+            'sessionId' => 'debug-session',
+            'runId' => 'run1',
+            'hypothesisId' => 'A,B,C,D,E'
+        ];
+        $logPath = defined('STORAGE_PATH') ? STORAGE_PATH . '/logs/debug.log' : '/tmp/debug.log';
+        @file_put_contents($logPath, json_encode($logData) . "\n", FILE_APPEND);
+        // #endregion
+        
+        // Try multiple sources: $_ENV, $_SERVER, getenv()
+        // Also check if $_ENV needs to be populated from $_SERVER (Railway sometimes doesn't populate $_ENV)
+        if (empty($_ENV['OPENAI_API_KEY']) && !empty($_SERVER['OPENAI_API_KEY'])) {
+            $_ENV['OPENAI_API_KEY'] = $_SERVER['OPENAI_API_KEY'];
+        }
+        
+        $apiKey = null;
+        if (!empty($_ENV['OPENAI_API_KEY'])) {
+            $apiKey = $_ENV['OPENAI_API_KEY'];
+        } elseif (!empty($_SERVER['OPENAI_API_KEY'])) {
+            $apiKey = $_SERVER['OPENAI_API_KEY'];
+        } elseif (getenv('OPENAI_API_KEY') !== false && !empty(getenv('OPENAI_API_KEY'))) {
+            $apiKey = getenv('OPENAI_API_KEY');
+        }
+        
+        // #region agent log
+        $resultInfo = [
+            'apiKey_found' => !empty($apiKey),
+            'apiKey_length' => $apiKey ? strlen($apiKey) : 0,
+            'apiKey_preview' => $apiKey ? substr($apiKey, 0, 10) . '...' : 'null',
+        ];
+        error_log('[DEBUG] OpenAIService constructor - API key resolution: ' . json_encode($resultInfo));
+        $logData2 = [
+            'location' => 'OpenAIService.php:42',
+            'message' => 'API key resolution result',
+            'data' => $resultInfo,
+            'timestamp' => time() * 1000,
+            'sessionId' => 'debug-session',
+            'runId' => 'run1',
+            'hypothesisId' => 'A,B,C,D,E'
+        ];
+        @file_put_contents($logPath, json_encode($logData2) . "\n", FILE_APPEND);
+        // #endregion
+        
+        if (empty($apiKey)) {
+            // Check for common variations of the variable name
+            $possibleKeys = ['OPENAI_API_KEY', 'openai_api_key', 'OpenAI_Api_Key'];
+            $foundVariations = [];
+            foreach ($possibleKeys as $keyVar) {
+                if (!empty($_SERVER[$keyVar])) {
+                    $foundVariations[] = "SERVER[$keyVar]=" . strlen($_SERVER[$keyVar]);
+                }
+                if (!empty($_ENV[$keyVar])) {
+                    $foundVariations[] = "ENV[$keyVar]=" . strlen($_ENV[$keyVar]);
+                }
+                if (getenv($keyVar) !== false && !empty(getenv($keyVar))) {
+                    $foundVariations[] = "getenv($keyVar)=" . strlen(getenv($keyVar));
+                }
+            }
+            
+            // Get all keys containing "OPENAI" or "API" for debugging
+            $allOpenaiKeys = array_filter(array_keys($_SERVER), function($k) { 
+                return stripos($k, 'OPENAI') !== false || stripos($k, 'API') !== false; 
+            });
+            
+            $debugMsg = 'OPENAI_API_KEY not found. ' .
+                       'ENV=' . (isset($_ENV['OPENAI_API_KEY']) ? 'set(' . strlen($_ENV['OPENAI_API_KEY']) . ')' : 'not_set') . 
+                       ', SERVER=' . (isset($_SERVER['OPENAI_API_KEY']) ? 'set(' . strlen($_SERVER['OPENAI_API_KEY']) . ')' : 'not_set') . 
+                       ', getenv=' . (getenv('OPENAI_API_KEY') !== false ? 'set(' . strlen(getenv('OPENAI_API_KEY')) . ')' : 'not_set') .
+                       ', vars_order=' . ini_get('variables_order') .
+                       (count($foundVariations) > 0 ? ', found_variations=' . implode(',', $foundVariations) : '') .
+                       (count($allOpenaiKeys) > 0 ? ', similar_keys=' . implode(',', array_slice($allOpenaiKeys, 0, 10)) : '');
+            error_log('[ERROR] ' . $debugMsg);
+            throw new \Exception($debugMsg);
+        }
+        
         $this->client = OpenAI::client($apiKey);
     }
     
     public function generateMoodSticker($mood, $style = 'y2k', $customText = null) {
+        // #region agent log
+        $logPath = defined('STORAGE_PATH') ? STORAGE_PATH . '/logs/debug.log' : '/tmp/debug.log';
+        $logData = [
+            'location' => 'OpenAIService.php:66',
+            'message' => 'generateMoodSticker called',
+            'data' => [
+                'mood' => $mood,
+                'style' => $style,
+                'customText' => $customText,
+                'client_exists' => isset($this->client),
+            ],
+            'timestamp' => time() * 1000,
+            'sessionId' => 'debug-session',
+            'runId' => 'run1',
+            'hypothesisId' => 'E'
+        ];
+        error_log('[DEBUG] generateMoodSticker called: ' . json_encode(['mood' => $mood, 'style' => $style]));
+        @file_put_contents($logPath, json_encode($logData) . "\n", FILE_APPEND);
+        // #endregion
+        
         // Build the prompt
         $prompt = $this->buildPrompt($mood, $style, $customText);
         
@@ -32,6 +143,24 @@ class OpenAIService {
             ];
             
         } catch (\Exception $e) {
+            // #region agent log
+            $logPath = defined('STORAGE_PATH') ? STORAGE_PATH . '/logs/debug.log' : '/tmp/debug.log';
+            $logData = [
+                'location' => 'OpenAIService.php:104',
+                'message' => 'OpenAI API error caught',
+                'data' => [
+                    'error_message' => $e->getMessage(),
+                    'error_code' => $e->getCode(),
+                ],
+                'timestamp' => time() * 1000,
+                'sessionId' => 'debug-session',
+                'runId' => 'run1',
+                'hypothesisId' => 'E'
+            ];
+            error_log('[ERROR] OpenAI API error: ' . $e->getMessage());
+            @file_put_contents($logPath, json_encode($logData) . "\n", FILE_APPEND);
+            // #endregion
+            
             return [
                 'success' => false,
                 'error' => $e->getMessage()

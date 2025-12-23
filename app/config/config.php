@@ -28,6 +28,60 @@ if (file_exists(dirname(dirname(__DIR__)) . '/.env')) {
     }
 }
 
+// Sync $_SERVER environment variables to $_ENV
+// This is critical for Railway and other platforms where $_ENV might not be auto-populated
+// Railway exposes environment variables via $_SERVER, but $_ENV might not be populated
+$isRailway = getenv('RAILWAY_ENVIRONMENT') || getenv('RAILWAY_STATIC_URL') || !empty($_SERVER['RAILWAY_ENVIRONMENT']) || !empty($_SERVER['RAILWAY_STATIC_URL']);
+$isProduction = !DEBUG_MODE; // If not in debug mode, assume production environment
+
+// Always sync environment variables in production or if Railway is detected
+if ($isRailway || $isProduction) {
+    $excludedKeys = ['REQUEST_METHOD', 'REQUEST_URI', 'SCRIPT_NAME', 'QUERY_STRING', 'SERVER_NAME', 'SERVER_PORT', 'SERVER_PROTOCOL', 'GATEWAY_INTERFACE', 'SERVER_SOFTWARE', 'PATH', 'HOME', 'USER', 'SHELL', 'PWD', 'SHLVL', '_', 'DOCUMENT_ROOT', 'SCRIPT_FILENAME', 'SERVER_ADDR', 'SERVER_SOFTWARE', 'REMOTE_ADDR', 'REMOTE_PORT', 'CONTENT_TYPE', 'CONTENT_LENGTH'];
+    
+    foreach ($_SERVER as $key => $value) {
+        // Only sync actual environment variables (not HTTP headers or other $_SERVER vars)
+        // Environment variables are typically uppercase and don't contain HTTP_ prefix
+        if (!isset($_ENV[$key]) && 
+            is_string($value) && 
+            strlen($key) > 0 &&
+            substr($key, 0, 5) !== 'HTTP_' && 
+            !in_array($key, $excludedKeys)) {
+            // Check if key looks like an environment variable (all uppercase with underscores/numbers)
+            $keyWithoutUnderscores = str_replace('_', '', $key);
+            $keyWithoutUnderscoresNumbers = preg_replace('/[0-9]/', '', $keyWithoutUnderscores);
+            if (ctype_upper($keyWithoutUnderscoresNumbers) && strlen($keyWithoutUnderscoresNumbers) > 0) {
+                $_ENV[$key] = $value;
+                // Also ensure putenv is set for compatibility
+                putenv("$key=$value");
+            }
+        }
+    }
+}
+
+// Explicitly check for OPENAI_API_KEY in all sources and sync it
+// This is a critical variable, so we check multiple sources aggressively
+$openaiKey = null;
+if (!empty($_SERVER['OPENAI_API_KEY'])) {
+    $openaiKey = $_SERVER['OPENAI_API_KEY'];
+} elseif (getenv('OPENAI_API_KEY') !== false && !empty(getenv('OPENAI_API_KEY'))) {
+    $openaiKey = getenv('OPENAI_API_KEY');
+} elseif (!empty($_ENV['OPENAI_API_KEY'])) {
+    $openaiKey = $_ENV['OPENAI_API_KEY'];
+}
+
+// Sync OPENAI_API_KEY to all sources if found in any source
+if (!empty($openaiKey)) {
+    if (empty($_ENV['OPENAI_API_KEY'])) {
+        $_ENV['OPENAI_API_KEY'] = $openaiKey;
+    }
+    if (empty($_SERVER['OPENAI_API_KEY'])) {
+        $_SERVER['OPENAI_API_KEY'] = $openaiKey;
+    }
+    if (getenv('OPENAI_API_KEY') === false) {
+        putenv('OPENAI_API_KEY=' . $openaiKey);
+    }
+}
+
 // Define root path
 define('ROOT_PATH', dirname(dirname(__DIR__)));
 define('APP_PATH', ROOT_PATH . '/app');

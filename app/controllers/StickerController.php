@@ -83,14 +83,49 @@ class StickerController extends Controller {
             }
             
             // NEW: Generate with OpenAI
-            $result = $this->openAIService->generateMoodSticker(
-                $mood['name'],
-                'y2k',
-                $input['custom_text'] ?? null
-            );
+            try {
+                $result = $this->openAIService->generateMoodSticker(
+                    $mood['name'],
+                    'y2k',
+                    $input['custom_text'] ?? null
+                );
+            } catch (Exception $serviceException) {
+                // If service constructor fails (API key issue), include debug info
+                $errorMsg = $serviceException->getMessage();
+                if (strpos($errorMsg, 'OPENAI_API_KEY') !== false) {
+                    $debugInfo = [
+                        'error' => $errorMsg,
+                        'debug' => [
+                            'has_ENV' => isset($_ENV['OPENAI_API_KEY']),
+                            'has_SERVER' => isset($_SERVER['OPENAI_API_KEY']),
+                            'has_getenv' => getenv('OPENAI_API_KEY') !== false,
+                            'variables_order' => ini_get('variables_order'),
+                        ]
+                    ];
+                    $this->errorResponse(json_encode($debugInfo, JSON_PRETTY_PRINT), 500);
+                    return;
+                }
+                throw $serviceException; // Re-throw if not API key related
+            }
             
             if (!$result['success']) {
-                $this->errorResponse('Failed to generate sticker: ' . $result['error'], 500);
+                $errorMsg = $result['error'];
+                // Check if error is about API key
+                if (strpos($errorMsg, 'API key') !== false || strpos($errorMsg, 'Incorrect API key') !== false) {
+                    $debugInfo = [
+                        'error' => $errorMsg,
+                        'debug' => [
+                            'has_ENV' => isset($_ENV['OPENAI_API_KEY']),
+                            'has_SERVER' => isset($_SERVER['OPENAI_API_KEY']),
+                            'has_getenv' => getenv('OPENAI_API_KEY') !== false,
+                            'variables_order' => ini_get('variables_order'),
+                        ]
+                    ];
+                    $this->errorResponse(json_encode($debugInfo, JSON_PRETTY_PRINT), 500);
+                } else {
+                    $this->errorResponse('Failed to generate sticker: ' . $errorMsg, 500);
+                }
+                return;
             }
             
             // Download and save the image locally
@@ -115,7 +150,23 @@ class StickerController extends Controller {
             $this->successResponse($sticker, 'Sticker generated successfully');
             
         } catch (Exception $e) {
-            $this->errorResponse($e->getMessage(), 500);
+            // Include debug info in error response for troubleshooting
+            $errorMsg = $e->getMessage();
+            if (strpos($errorMsg, 'OPENAI_API_KEY') !== false) {
+                // Add additional debug context for API key issues
+                $debugInfo = [
+                    'error' => $errorMsg,
+                    'debug' => [
+                        'has_ENV' => isset($_ENV['OPENAI_API_KEY']),
+                        'has_SERVER' => isset($_SERVER['OPENAI_API_KEY']),
+                        'has_getenv' => getenv('OPENAI_API_KEY') !== false,
+                        'variables_order' => ini_get('variables_order'),
+                    ]
+                ];
+                $this->errorResponse(json_encode($debugInfo, JSON_PRETTY_PRINT), 500);
+            } else {
+                $this->errorResponse($errorMsg, 500);
+            }
         }
     }
     
@@ -464,5 +515,40 @@ class StickerController extends Controller {
         }
         
         return null;
+    }
+    
+    // Debug endpoint to check environment variables (temporary)
+    public function debugEnv() {
+        // Get all environment variable keys (without values for security)
+        $envKeys = array_keys($_ENV);
+        $serverKeys = array_keys($_SERVER);
+        $allEnvKeys = array_unique(array_merge($envKeys, $serverKeys));
+        
+        // Filter to show only keys that might be relevant (OPENAI, RAILWAY, etc.)
+        $relevantKeys = array_filter($allEnvKeys, function($key) {
+            return stripos($key, 'OPENAI') !== false || 
+                   stripos($key, 'RAILWAY') !== false ||
+                   stripos($key, 'API') !== false;
+        });
+        
+        // Check each source for OPENAI_API_KEY
+        $openaiCheck = [
+            'OPENAI_API_KEY' => [
+                'in_ENV' => isset($_ENV['OPENAI_API_KEY']),
+                'ENV_length' => isset($_ENV['OPENAI_API_KEY']) ? strlen($_ENV['OPENAI_API_KEY']) : 0,
+                'ENV_empty' => isset($_ENV['OPENAI_API_KEY']) ? empty($_ENV['OPENAI_API_KEY']) : true,
+                'in_SERVER' => isset($_SERVER['OPENAI_API_KEY']),
+                'SERVER_length' => isset($_SERVER['OPENAI_API_KEY']) ? strlen($_SERVER['OPENAI_API_KEY']) : 0,
+                'SERVER_empty' => isset($_SERVER['OPENAI_API_KEY']) ? empty($_SERVER['OPENAI_API_KEY']) : true,
+                'getenv_result' => getenv('OPENAI_API_KEY') !== false,
+                'getenv_length' => getenv('OPENAI_API_KEY') !== false ? strlen(getenv('OPENAI_API_KEY')) : 0,
+                'getenv_empty' => getenv('OPENAI_API_KEY') !== false ? empty(getenv('OPENAI_API_KEY')) : true,
+            ],
+            'variables_order' => ini_get('variables_order'),
+            'relevant_env_keys' => array_values($relevantKeys),
+            'all_env_key_count' => count($allEnvKeys),
+        ];
+        
+        $this->successResponse($openaiCheck, 'Environment variable debug info');
     }
 }
