@@ -589,6 +589,13 @@ class StickerController extends Controller {
             return stripos($key, 'RAILWAY') !== false;
         });
         
+        // Get all Render-related variables
+        $renderVars = array_filter($actualEnvVars, function($key) {
+            return stripos($key, 'RENDER') !== false;
+        });
+        
+        $isRender = !empty($renderVars);
+        
         // Check each source for OPENAI_API_KEY
         // Also check for any keys that contain "OPENAI" or "API" (case-insensitive)
         $allKeysWithOpenAI = array_filter($actualEnvVars, function($key) {
@@ -631,6 +638,8 @@ class StickerController extends Controller {
             'variables_order' => ini_get('variables_order'),
             'railway_detected' => !empty($railwayVars),
             'railway_vars' => array_values($railwayVars),
+            'render_detected' => $isRender,
+            'render_vars' => array_values($renderVars),
             'relevant_env_keys' => array_values($relevantKeys),
             'all_keys_with_openai' => array_values($allKeysWithOpenAI),
             'openai_key_values' => $openaiKeyValues,
