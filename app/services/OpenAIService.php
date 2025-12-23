@@ -216,19 +216,33 @@ class OpenAIService {
     }
     
     private function buildPrompt($mood, $style, $customText) {
-        // Craft Y2K-style prompts
-        $basePrompt = "Create a vibrant Y2K aesthetic digital sticker with a ";
-        $moodDescription = strtolower($mood) . " mood vibe";
-        $styleElements = ", featuring bright gradients, chrome effects, butterfly motifs, holographic elements, and early 2000s digital aesthetic. ";
+        // Y2K theme elements to randomly incorporate
+        $themes = [
+            'Bratz dolls aesthetic with oversized heads, large eyes, full glossy lips, trendy streetwear fashion, bold makeup, and attitude',
+            'lipgloss and beauty products with shiny, glossy textures, pink and purple hues, sparkles, and early 2000s makeup aesthetic',
+            'colorful butterfly clips in hair, playful accessories, pastel colors, and fun Y2K fashion accessories',
+            '90s makeup style with blue eyeshadow, glitter, bold eyeliner, frosted lips, and dramatic lashes',
+            'Spice Girls inspired fashion with platform shoes, Union Jack elements, bold patterns, girl power aesthetic, and 90s pop culture',
+            'Clueless movie aesthetic with plaid skirts, yellow outfits, preppy fashion, Beverly Hills style, and 90s teen movie vibes'
+        ];
         
-        $prompt = $basePrompt . $moodDescription . $styleElements;
+        // Randomly select 2-3 themes to combine
+        shuffle($themes);
+        $selectedThemes = array_slice($themes, 0, rand(2, 3));
+        $themeDescription = implode(', ', $selectedThemes);
+        
+        // Build the prompt with mood and themes
+        $prompt = "Create a vibrant Y2K aesthetic digital sticker with a " . strtolower($mood) . " mood. ";
+        $prompt .= "Incorporate elements inspired by: " . $themeDescription . ". ";
+        $prompt .= "Style: bright neon colors, chrome effects, holographic elements, glitter, sparkles, glossy textures, and early 2000s pop culture aesthetic. ";
+        $prompt .= "Design should be fun, playful, and nostalgic, capturing the essence of late 90s and early 2000s fashion and beauty trends. ";
         
         // Add custom text if provided
         if ($customText) {
-            $prompt .= "Include the text '" . $customText . "' prominently in the design. ";
+            $prompt .= "Include the text '" . $customText . "' prominently in the design, styled in a fun Y2K font. ";
         }
         
-        $prompt .= "Digital art, glossy finish, nostalgic 2000s internet culture, sticker format with transparent or complementary background.";
+        $prompt .= "Digital art style, sticker format with transparent background or soft gradient background. High quality, detailed, vibrant colors.";
         
         return $prompt;
     }

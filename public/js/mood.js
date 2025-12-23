@@ -33,59 +33,59 @@ function getFallbackMoods() {
     return [
         {
             id: 1,
-            name: 'Happy & Energetic',
-            emoji: '😊',
-            description: 'Feeling pumped!',
-            color: '#FFFF00'
-        },
-        {
-            id: 2,
-            name: 'Chill & Peaceful',
-            emoji: '😌',
-            description: 'Just vibing~',
-            color: '#00FFFF'
-        },
-        {
-            id: 3,
-            name: 'Flirty & Fun',
-            emoji: '😍',
-            description: 'Feeling cute!',
+            name: 'Bratz Vibes',
+            emoji: '✨',
+            description: 'Totally Bratz! Bold fashion and attitude',
             color: '#FF69B4'
         },
         {
-            id: 4,
-            name: 'Thoughtful & Deep',
-            emoji: '🤔',
-            description: 'In my feels',
-            color: '#9933FF'
+            id: 2,
+            name: 'Lipgloss Queen',
+            emoji: '💋',
+            description: 'Shiny and glossy like your favorite lipgloss',
+            color: '#FF1493'
         },
         {
-            id: 5,
-            name: 'Fired Up & Ready',
-            emoji: '😤',
-            description: 'Let\'s GO!',
-            color: '#FF6600'
-        },
-        {
-            id: 6,
-            name: 'Need a Hug',
-            emoji: '😭',
-            description: 'Soft mood',
+            id: 3,
+            name: 'Butterfly Clip Energy',
+            emoji: '🦋',
+            description: 'Colorful clips and playful accessories',
             color: '#FFB6C1'
         },
         {
+            id: 4,
+            name: '90s Makeup Mood',
+            emoji: '💄',
+            description: 'Blue eyeshadow and glitter dreams',
+            color: '#00CED1'
+        },
+        {
+            id: 5,
+            name: 'Spice Girls Style',
+            emoji: '👑',
+            description: 'Girl power and platform shoes',
+            color: '#FFD700'
+        },
+        {
+            id: 6,
+            name: 'Clueless Chic',
+            emoji: '👗',
+            description: 'As if! Preppy and plaid perfection',
+            color: '#FFD700'
+        },
+        {
             id: 7,
-            name: 'Party Mode',
-            emoji: '🎉',
-            description: 'Turn up!',
+            name: 'Y2K Party',
+            emoji: '🎊',
+            description: 'Turn up the Y2K vibes!',
             color: '#FF00FF'
         },
         {
             id: 8,
-            name: 'Creative Vibes',
-            emoji: '🎨',
-            description: 'Artsy mood',
-            color: '#CCFF00'
+            name: 'Glitter & Glam',
+            emoji: '✨',
+            description: 'All the sparkles and shine',
+            color: '#FF69B4'
         }
     ];
 }

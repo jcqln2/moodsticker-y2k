@@ -15,16 +15,16 @@ CREATE TABLE moods (
     INDEX idx_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insert default moods
+-- Insert default moods (Y2K themed, no emojis)
 INSERT INTO moods (name, emoji, description, color) VALUES
-('Happy & Energetic', '😊', 'Feeling pumped!', '#FFFF00'),
-('Chill & Peaceful', '😌', 'Just vibing~', '#00FFFF'),
-('Flirty & Fun', '😍', 'Feeling cute!', '#FF69B4'),
-('Thoughtful & Deep', '🤔', 'In my feels', '#9933FF'),
-('Fired Up & Ready', '😤', 'Let\'s GO!', '#FF6600'),
-('Need a Hug', '😭', 'Soft mood', '#FFB6C1'),
-('Party Mode', '🎉', 'Turn up!', '#FF00FF'),
-('Creative Vibes', '🎨', 'Artsy mood', '#CCFF00');
+('Bratz Vibes', '✨', 'Totally Bratz! Bold fashion and attitude', '#FF69B4'),
+('Lipgloss Queen', '💋', 'Shiny and glossy like your favorite lipgloss', '#FF1493'),
+('Butterfly Clip Energy', '🦋', 'Colorful clips and playful accessories', '#FFB6C1'),
+('90s Makeup Mood', '💄', 'Blue eyeshadow and glitter dreams', '#00CED1'),
+('Spice Girls Style', '👑', 'Girl power and platform shoes', '#FFD700'),
+('Clueless Chic', '👗', 'As if! Preppy and plaid perfection', '#FFD700'),
+('Y2K Party', '🎊', 'Turn up the Y2K vibes!', '#FF00FF'),
+('Glitter & Glam', '✨', 'All the sparkles and shine', '#FF69B4');
 
 -- ==================== STICKERS TABLE ====================
 CREATE TABLE stickers (
