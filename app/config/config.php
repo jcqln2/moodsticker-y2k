@@ -32,7 +32,8 @@ if (file_exists(dirname(dirname(__DIR__)) . '/.env')) {
 // This is critical for Railway and other platforms where $_ENV might not be auto-populated
 // Railway exposes environment variables via $_SERVER, but $_ENV might not be populated
 $isRailway = getenv('RAILWAY_ENVIRONMENT') || getenv('RAILWAY_STATIC_URL') || !empty($_SERVER['RAILWAY_ENVIRONMENT']) || !empty($_SERVER['RAILWAY_STATIC_URL']);
-$isProduction = !DEBUG_MODE; // If not in debug mode, assume production environment
+// Check if we're in production (not local development)
+$isProduction = $isRailway || (!file_exists(dirname(dirname(__DIR__)) . '/.env'));
 
 // Always sync environment variables in production or if Railway is detected
 if ($isRailway || $isProduction) {
