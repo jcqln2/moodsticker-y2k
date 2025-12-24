@@ -70,18 +70,40 @@
             </div>
         </main>
 
-        <footer class="landing-footer">
-            <p>© 2024 Y2K Mood Stickers | Built with 💜 and nostalgia</p>
-            <div class="footer-links">
-                <a href="#about">About</a> | 
-                <a href="#faq">FAQ</a> | 
-                <a href="gallery.html">View Gallery</a> |
-            </div>
-        </footer>
     </div>
 
-
+    <!-- Windows Taskbar -->
+    <div class="taskbar">
+        <button class="taskbar-start">START</button>
+        <div class="taskbar-buttons">
+            <button class="taskbar-btn active" onclick="window.location.href='landing.html'">
+                <span>🏠</span> Home
+            </button>
+            <button class="taskbar-btn" onclick="window.location.href='mood-selection.html'">
+                <span>🎨</span> Create
+            </button>
+            <button class="taskbar-btn" onclick="window.location.href='gallery.html'">
+                <span>🖼️</span> Gallery
+            </button>
+        </div>
+        <div class="taskbar-clock" id="taskbarClock"></div>
+    </div>
 
     <script src="../js/landing.js"></script>
+    <script>
+        // Update taskbar clock
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+            const clock = document.getElementById('taskbarClock');
+            if (clock) clock.textContent = time;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
 </body>
 </html>
