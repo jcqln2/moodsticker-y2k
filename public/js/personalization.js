@@ -33,72 +33,51 @@ function loadSelectedMood() {
     const moodData = sessionStorage.getItem('selectedMood');
     
     if (!moodData) {
-        alert('No mood selected! Redirecting to mood selection...');
+        alert('No theme selected! Redirecting to theme selection...');
         window.location.href = 'mood-selection.html';
         return;
     }
     
-    selectedMood = JSON.parse(moodData);
-    console.log('✅ Loaded mood:', selectedMood.name);
-    
-    // Display selected mood with icon
-    const displayIcon = document.getElementById('displayIcon');
-    if (displayIcon) {
-        displayIcon.innerHTML = getThemeIcon(selectedMood.name);
-    }
-    document.getElementById('displayName').textContent = selectedMood.name;
-    
-    // Set default color to mood color
-    customizations.customColor = selectedMood.color;
-    document.getElementById('customColor').value = selectedMood.color;
-    
-    // Highlight the mood color in palette
-    highlightColorInPalette(selectedMood.color);
-    
-    // Show initial preview
-    updatePreview();
-}
-
-// ==================== PHRASE BUTTONS ====================
-document.querySelectorAll('.phrase-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const phrase = btn.dataset.phrase;
+    try {
+        selectedMood = JSON.parse(moodData);
         
-        // Toggle selection
-        if (btn.classList.contains('selected')) {
-            btn.classList.remove('selected');
-            document.getElementById('customText').value = '';
-            customizations.customText = '';
-        } else {
-            // Remove other selections
-            document.querySelectorAll('.phrase-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            
-            // Set text
-            document.getElementById('customText').value = phrase;
-            customizations.customText = phrase;
+        if (!selectedMood || !selectedMood.name) {
+            throw new Error('Invalid mood data');
         }
         
+        console.log('✅ Loaded mood:', selectedMood.name);
+        
+        // Display selected mood with icon
+        const displayIcon = document.getElementById('displayIcon');
+        if (displayIcon) {
+            displayIcon.innerHTML = getThemeIcon(selectedMood.name);
+        }
+        
+        const displayName = document.getElementById('displayName');
+        if (displayName) {
+            displayName.textContent = selectedMood.name;
+        }
+        
+        // Set default color to mood color
+        if (selectedMood.color) {
+            customizations.customColor = selectedMood.color;
+            const colorInput = document.getElementById('customColor');
+            if (colorInput) {
+                colorInput.value = selectedMood.color;
+            }
+            
+            // Highlight the mood color in palette
+            highlightColorInPalette(selectedMood.color);
+        }
+        
+        // Show initial preview
         updatePreview();
-    });
-});
-
-// ==================== COLOR BUTTONS ====================
-document.querySelectorAll('.color-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const color = btn.dataset.color;
-        
-        // Update selection
-        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        
-        // Update color input
-        document.getElementById('customColor').value = color;
-        customizations.customColor = color;
-        
-        updatePreview();
-    });
-});
+    } catch (error) {
+        console.error('Error loading mood:', error);
+        alert('Error loading theme. Redirecting to theme selection...');
+        window.location.href = 'mood-selection.html';
+    }
+}
 
 // Helper to highlight color in palette
 function highlightColorInPalette(color) {
@@ -109,39 +88,22 @@ function highlightColorInPalette(color) {
     });
 }
 
-// ==================== FORM INPUTS ====================
-document.getElementById('userName').addEventListener('input', (e) => {
-    customizations.userName = e.target.value;
-    updatePreview();
-});
-
-document.getElementById('customText').addEventListener('input', (e) => {
-    customizations.customText = e.target.value;
-    
-    // Deselect phrase buttons if manually typing
-    document.querySelectorAll('.phrase-btn').forEach(btn => btn.classList.remove('selected'));
-    
-    updatePreview();
-});
-
-document.getElementById('customColor').addEventListener('input', (e) => {
-    customizations.customColor = e.target.value;
-    
-    // Deselect color buttons
-    document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('selected'));
-    
-    updatePreview();
-});
-
 // ==================== UPDATE PREVIEW ====================
 function updatePreview() {
+    if (!selectedMood) {
+        return; // Don't update preview if mood isn't loaded yet
+    }
+    
     const preview = document.getElementById('stickerPreview');
+    if (!preview) {
+        return; // Preview element doesn't exist (removed from simplified HTML)
+    }
     
     // Create preview HTML
     preview.innerHTML = `
         <div class="preview-sticker" style="background: ${customizations.customColor};">
             <div class="preview-mood-name">${selectedMood.name}</div>
-            <div class="preview-emoji">${selectedMood.emoji}</div>
+            <div class="preview-emoji">${selectedMood.emoji || '✨'}</div>
             ${customizations.customText ? `<div class="preview-custom-text">${customizations.customText}</div>` : ''}
             ${customizations.userName ? `<div class="preview-user-name">${customizations.userName}</div>` : ''}
         </div>
@@ -149,26 +111,20 @@ function updatePreview() {
 }
 
 // ==================== GENERATE STICKER ====================
-document.getElementById('customizationForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    await generateSticker();
-});
-
-document.getElementById('skipBtn').addEventListener('click', async () => {
-    // Clear customizations and generate
-    customizations = {
-        userName: '',
-        customText: '',
-        customColor: selectedMood.color
-    };
-    await generateSticker();
-});
-
 async function generateSticker() {
     try {
+        // Check if mood is loaded
+        if (!selectedMood || !selectedMood.id) {
+            alert('No theme selected. Please go back and select a theme.');
+            window.location.href = 'mood-selection.html';
+            return;
+        }
+        
         // Show loading modal
         const loadingModal = document.getElementById('loadingModal');
-        loadingModal.classList.add('show');
+        if (loadingModal) {
+            loadingModal.classList.add('show');
+        }
         
         console.log('🎨 Generating sticker...');
         
@@ -218,12 +174,11 @@ async function generateSticker() {
         sessionStorage.setItem('generatedSticker', JSON.stringify(result.data));
         
         // Hide loading modal
-        loadingModal.classList.remove('show');
+        if (loadingModal) {
+            loadingModal.classList.remove('show');
+        }
         
-        // Navigate to preview/download page
-        // window.location.href = 'sticker-result.html';
-        
-        // For now, show success message
+        // Navigate to result page
         window.location.href = 'sticker-result.html';
         
     } catch (error) {
@@ -231,45 +186,122 @@ async function generateSticker() {
         
         // Hide loading modal
         const loadingModal = document.getElementById('loadingModal');
-        loadingModal.classList.remove('show');
+        if (loadingModal) {
+            loadingModal.classList.remove('show');
+        }
         
         alert(`Error: ${error.message}\n\nPlease try again.`);
     }
 }
 
-// ==================== FLOATING SHAPES ====================
-function createFloatingShapes() {
-    const container = document.getElementById('shapes');
-    const shapes = ['○', '△', '□', '◇', '☆'];
-    const shapeCount = 15;
-    
-    for (let i = 0; i < shapeCount; i++) {
-        const shape = document.createElement('div');
-        shape.className = 'shape';
-        shape.textContent = shapes[Math.floor(Math.random() * shapes.length)];
-        shape.style.left = Math.random() * 100 + '%';
-        shape.style.top = Math.random() * 100 + '%';
-        shape.style.fontSize = (Math.random() * 40 + 20) + 'px';
-        shape.style.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
-        shape.style.animationDuration = (Math.random() * 10 + 15) + 's';
-        shape.style.animationDelay = Math.random() * 5 + 's';
-        container.appendChild(shape);
-    }
-}
+// ==================== SETUP EVENT LISTENERS ====================
+function setupEventListeners() {
+    // Phrase buttons
+    document.querySelectorAll('.phrase-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const phrase = btn.dataset.phrase;
+            
+            // Toggle selection
+            if (btn.classList.contains('selected')) {
+                btn.classList.remove('selected');
+                const textInput = document.getElementById('customText');
+                if (textInput) {
+                    textInput.value = '';
+                }
+                customizations.customText = '';
+            } else {
+                // Remove other selections
+                document.querySelectorAll('.phrase-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                
+                // Set text
+                const textInput = document.getElementById('customText');
+                if (textInput) {
+                    textInput.value = phrase;
+                }
+                customizations.customText = phrase;
+            }
+            
+            updatePreview();
+        });
+    });
 
-// ==================== SPARKLES ====================
-function createSparkles() {
-    const container = document.getElementById('sparkles');
-    const sparkleCount = 30;
-    
-    for (let i = 0; i < sparkleCount; i++) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'sparkle';
-        sparkle.style.left = Math.random() * 100 + '%';
-        sparkle.style.top = Math.random() * 100 + '%';
-        sparkle.style.animationDelay = Math.random() * 3 + 's';
-        sparkle.style.animationDuration = (Math.random() * 2 + 2) + 's';
-        container.appendChild(sparkle);
+    // Color buttons
+    document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const color = btn.dataset.color;
+            
+            // Update selection
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            
+            // Update color input
+            const colorInput = document.getElementById('customColor');
+            if (colorInput) {
+                colorInput.value = color;
+            }
+            customizations.customColor = color;
+            
+            updatePreview();
+        });
+    });
+
+    // Form inputs
+    const userNameInput = document.getElementById('userName');
+    if (userNameInput) {
+        userNameInput.addEventListener('input', (e) => {
+            customizations.userName = e.target.value;
+            updatePreview();
+        });
+    }
+
+    const customTextInput = document.getElementById('customText');
+    if (customTextInput) {
+        customTextInput.addEventListener('input', (e) => {
+            customizations.customText = e.target.value;
+            
+            // Deselect phrase buttons if manually typing
+            document.querySelectorAll('.phrase-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            updatePreview();
+        });
+    }
+
+    const customColorInput = document.getElementById('customColor');
+    if (customColorInput) {
+        customColorInput.addEventListener('input', (e) => {
+            customizations.customColor = e.target.value;
+            
+            // Deselect color buttons
+            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            updatePreview();
+        });
+    }
+
+    // Form submission
+    const form = document.getElementById('customizationForm');
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await generateSticker();
+        });
+    }
+
+    // Skip button
+    const skipBtn = document.getElementById('skipBtn');
+    if (skipBtn) {
+        skipBtn.addEventListener('click', async () => {
+            // Clear customizations and generate
+            if (selectedMood && selectedMood.color) {
+                customizations = {
+                    userName: '',
+                    customText: '',
+                    customColor: selectedMood.color
+                };
+            }
+            await generateSticker();
+        });
     }
 }
 
@@ -277,9 +309,8 @@ function createSparkles() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('💖 Personalization page loading...');
     
-    // Create visual effects
-    createFloatingShapes();
-    createSparkles();
+    // Setup event listeners
+    setupEventListeners();
     
     // Load selected mood
     loadSelectedMood();
