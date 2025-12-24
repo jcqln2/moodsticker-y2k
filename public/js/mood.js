@@ -48,7 +48,8 @@ async function fetchMoods() {
     } catch (error) {
         console.error('❌ Error fetching moods:', error);
         // Fallback to hardcoded moods if API fails
-        return getFallbackMoods();
+        moods = getFallbackMoods();
+        return moods;
     }
 }
 
@@ -121,7 +122,7 @@ function renderMoodGrid() {
     grid.innerHTML = '';
     
     if (moods.length === 0) {
-        grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1/-1;">Loading moods...</p>';
+        grid.innerHTML = '<p style="color: #666; text-align: center; grid-column: 1/-1; padding: 40px;">Loading themes...</p>';
         return;
     }
     
@@ -183,26 +184,7 @@ function selectMood(mood) {
 }
 
 // ==================== RANDOM MOOD ====================
-document.getElementById('randomBtn').addEventListener('click', async () => {
-    try {
-        // Try to get random mood from API
-        const response = await fetch(`${API_BASE_URL}/moods/random`);
-        const data = await response.json();
-        
-        if (data.success) {
-            const randomMood = data.data;
-            selectMood(randomMood);
-            console.log('🎲 Random mood from API:', randomMood.name);
-        } else {
-            throw new Error('API failed');
-        }
-    } catch (error) {
-        // Fallback to local random
-        console.warn('⚠️ Using local random mood');
-        const randomMood = moods[Math.floor(Math.random() * moods.length)];
-        selectMood(randomMood);
-    }
-});
+// Removed - random button no longer in UI
 
 // ==================== CONFIRMATION MODAL ====================
 function showConfirmationModal(mood) {
@@ -240,8 +222,6 @@ document.getElementById('changeMindBtn').addEventListener('click', () => {
         const card = document.querySelector(`[data-mood-id="${selectedMood.id}"]`);
         if (card) {
             card.classList.remove('selected');
-            card.style.borderColor = 'transparent';
-            card.style.boxShadow = 'none';
         }
     }
     
@@ -261,49 +241,10 @@ document.getElementById('continueBtn').addEventListener('click', () => {
     window.location.href = 'personalization.html';
 });
 
-// ==================== FLOATING SHAPES ====================
-function createFloatingShapes() {
-    const container = document.getElementById('shapes');
-    const shapes = ['○', '△', '□', '◇', '☆'];
-    const shapeCount = 20;
-    
-    for (let i = 0; i < shapeCount; i++) {
-        const shape = document.createElement('div');
-        shape.className = 'shape';
-        shape.textContent = shapes[Math.floor(Math.random() * shapes.length)];
-        shape.style.left = Math.random() * 100 + '%';
-        shape.style.top = Math.random() * 100 + '%';
-        shape.style.fontSize = (Math.random() * 40 + 20) + 'px';
-        shape.style.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
-        shape.style.animationDuration = (Math.random() * 10 + 15) + 's';
-        shape.style.animationDelay = Math.random() * 5 + 's';
-        container.appendChild(shape);
-    }
-}
-
-// ==================== SPARKLES (reused from landing) ====================
-function createSparkles() {
-    const container = document.getElementById('sparkles');
-    const sparkleCount = 30;
-    
-    for (let i = 0; i < sparkleCount; i++) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'sparkle';
-        sparkle.style.left = Math.random() * 100 + '%';
-        sparkle.style.top = Math.random() * 100 + '%';
-        sparkle.style.animationDelay = Math.random() * 3 + 's';
-        sparkle.style.animationDuration = (Math.random() * 2 + 2) + 's';
-        container.appendChild(sparkle);
-    }
-}
 
 // ==================== INITIALIZE ====================
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('💫 Mood selection page loading...');
-    
-    // Create visual effects
-    createFloatingShapes();
-    createSparkles();
     
     // Fetch moods from API
     moods = await fetchMoods();
