@@ -142,27 +142,16 @@ function renderMoodGrid() {
         // Click handler
         card.addEventListener('click', () => selectMood(mood));
         
-        // Jelly-like hover effect with color
+        // Simple hover effect
         card.addEventListener('mouseenter', () => {
             if (selectedMood?.id !== mood.id) {
-                const rgb = hexToRgb(mood.color);
-                card.style.borderColor = `rgba(${rgb}, 0.6)`;
-                // Add subtle color glow
-                card.style.boxShadow = `
-                    0 20px 60px rgba(0, 0, 0, 0.12),
-                    0 8px 24px rgba(${rgb}, 0.25),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-                    inset 0 -1px 0 rgba(255, 255, 255, 0.3),
-                    0 0 0 1px rgba(255, 255, 255, 0.3),
-                    0 0 30px rgba(${rgb}, 0.15)
-                `;
+                // No special effects, just rely on CSS
             }
         });
         
         card.addEventListener('mouseleave', () => {
             if (selectedMood?.id !== mood.id) {
-                card.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-                card.style.boxShadow = '';
+                // No special effects
             }
         });
         
@@ -183,23 +172,10 @@ function selectMood(mood) {
         card.classList.remove('selected');
     });
     
-    // Add selection to clicked card with jelly effect
+    // Add selection to clicked card
     const selectedCard = document.querySelector(`[data-mood-id="${mood.id}"]`);
     if (selectedCard) {
         selectedCard.classList.add('selected');
-        const rgb = hexToRgb(mood.color);
-        selectedCard.style.borderColor = `rgba(${rgb}, 0.8)`;
-        // Enhanced jelly glow for selected card
-        selectedCard.style.boxShadow = `
-            0 16px 48px rgba(${rgb}, 0.3),
-            0 8px 24px rgba(${rgb}, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.9),
-            inset 0 -1px 0 rgba(255, 255, 255, 0.4),
-            0 0 0 2px rgba(${rgb}, 0.3),
-            0 0 40px rgba(${rgb}, 0.2)
-        `;
-        // Add a subtle bounce animation on selection
-        selectedCard.style.animation = 'jellySelect 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
     }
     
     // Show confirmation modal

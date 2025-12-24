@@ -4,106 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ Y2K Mood Sticker Generator ✨</title>
+    <title>Y2K Mood Stickers</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body class="landing-page">
-    <!-- Animated background elements -->
-    <div class="sparkles-container" id="sparkles"></div>
-    <div class="stars-container" id="stars"></div>
-    
     <div class="container">
         <header class="main-header">
-            <h1 class="glitch-text" data-text="Y2K MOOD STICKERS">
-                Y2K MOOD STICKERS
-            </h1>
-            <div class="subtitle-container">
-                <p class="subtitle">Create Y2K-Inspired Digital Stickers</p>
-            </div>
+            <h1>Y2K Mood Stickers</h1>
         </header>
 
         <main class="landing-content">
             <div class="hero-section">
-                <div class="animated-border">
-                    <div class="hero-text">
-                        <p class="tagline">
-                            Create unique Y2K-inspired stickers with AI
-                        </p>
-                        <p class="description">
-                            Choose from themes like Bratz, Spice Girls, Clueless, and more. 
-                            Customize your sticker with colors and text, then download or mint as NFT.
-                        </p>
-                        <p class="description">
-                            <span class="highlight">100% Free</span> • No account required • Instant download
-                        </p>
-                    </div>
-                </div>
-
-                <div class="feature-boxes">
-                    <div class="feature-box">
-                        <span class="feature-icon">✨</span>
-                        <h3>AI-Powered</h3>
-                        <p>Advanced AI generates unique Y2K designs</p>
-                    </div>
-                    <div class="feature-box">
-                        <span class="feature-icon">🎨</span>
-                        <h3>Fully Customizable</h3>
-                        <p>Choose colors, text, and themes</p>
-                    </div>
-                    <div class="feature-box">
-                        <span class="feature-icon">💾</span>
-                        <h3>Free Download</h3>
-                        <p>High-quality PNG files, no watermarks</p>
-                    </div>
-                </div>
-
-                <button class="cta-button" id="startBtn">
-                    <span class="button-text">Create Your Sticker</span>
-                    <span class="button-shine"></span>
-                </button>
-
-                <div class="fun-facts">
-                    <p class="marquee-text">
-                        <span>✨ Powered by OpenAI DALL-E 3 • High-Quality 1024x1024 Images • Instant Generation • Free Forever</span>
-                    </p>
-                </div>
+                <p class="tagline">Create Y2K-inspired stickers with AI</p>
+                <button class="cta-button" id="startBtn">Create Sticker</button>
             </div>
         </main>
-
-    </div>
-
-    <!-- Windows Taskbar -->
-    <div class="taskbar">
-        <button class="taskbar-start">START</button>
-        <div class="taskbar-buttons">
-            <button class="taskbar-btn active" onclick="window.location.href='landing.html'">
-                <span>🏠</span> Home
-            </button>
-            <button class="taskbar-btn" onclick="window.location.href='mood-selection.html'">
-                <span>🎨</span> Create
-            </button>
-            <button class="taskbar-btn" onclick="window.location.href='gallery.html'">
-                <span>🖼️</span> Gallery
-            </button>
-        </div>
-        <div class="taskbar-clock" id="taskbarClock"></div>
     </div>
 
     <script src="../js/landing.js"></script>
-    <script>
-        // Update taskbar clock
-        function updateClock() {
-            const now = new Date();
-            const time = now.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                hour12: false 
-            });
-            const clock = document.getElementById('taskbarClock');
-            if (clock) clock.textContent = time;
-        }
-        updateClock();
-        setInterval(updateClock, 1000);
-    </script>
 </body>
 </html>
