@@ -4,22 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customize Your Sticker! ✨</title>
+    <title>Customize Sticker</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body class="personalization-page">
-    <!-- Animated background elements -->
-    <div class="sparkles-container" id="sparkles"></div>
-    <div class="floating-shapes" id="shapes"></div>
-    
     <div class="container">
         <header class="page-header">
             <a href="mood-selection.html" class="back-button">← Back</a>
-            <h1 class="page-title">Customize Your Sticker</h1>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: 66%"></div>
-            </div>
-            <p class="step-indicator">Step 2 of 3</p>
+            <h1>Customize Sticker</h1>
         </header>
 
         <main class="personalization-content">
@@ -34,23 +26,15 @@
 
             <!-- Customization Form -->
             <div class="customization-section">
-                <div class="section-header">
-                    <h2>Personalize Your Sticker</h2>
-                    <p class="section-subtitle">All customization options are optional</p>
-                </div>
-
                 <form id="customizationForm">
                     <!-- Name/Nickname -->
                     <div class="form-group">
-                        <label for="userName">
-                            <span class="label-icon">✏️</span>
-                            Your Name or Nickname
-                        </label>
+                        <label for="userName">Your Name or Nickname</label>
                         <input 
                             type="text" 
                             id="userName" 
                             name="userName" 
-                            placeholder="e.g., Sarah, Cool Kid, etc."
+                            placeholder="e.g., Sarah"
                             maxlength="20"
                             class="form-input"
                         >
@@ -59,10 +43,7 @@
 
                     <!-- Custom Text -->
                     <div class="form-group">
-                        <label for="customText">
-                            <span class="label-icon">💬</span>
-                            Add a Phrase
-                        </label>
+                        <label for="customText">Add a Phrase</label>
                         <div class="phrase-options">
                             <button type="button" class="phrase-btn" data-phrase="BRB">BRB</button>
                             <button type="button" class="phrase-btn" data-phrase="OMG">OMG</button>
@@ -71,7 +52,7 @@
                             <button type="button" class="phrase-btn" data-phrase="2 Cool">2 Cool</button>
                             <button type="button" class="phrase-btn" data-phrase="Whatever">Whatever</button>
                             <button type="button" class="phrase-btn" data-phrase="YOLO">YOLO</button>
-                            <button type="button" class="phrase-btn" data-phrase="Vibes ✨">Vibes ✨</button>
+                            <button type="button" class="phrase-btn" data-phrase="Vibes">Vibes</button>
                         </div>
                         <input 
                             type="text" 
@@ -86,21 +67,18 @@
 
                     <!-- Color Picker -->
                     <div class="form-group">
-                        <label for="customColor">
-                            <span class="label-icon">🎨</span>
-                            Pick Your Fave Color
-                        </label>
+                        <label for="customColor">Pick Your Color</label>
                         <div class="color-palette">
-                            <button type="button" class="color-btn" data-color="#FF00FF" style="background: #FF00FF;" title="Hot Pink"></button>
-                            <button type="button" class="color-btn" data-color="#00FFFF" style="background: #00FFFF;" title="Cyan"></button>
-                            <button type="button" class="color-btn" data-color="#FFFF00" style="background: #FFFF00;" title="Yellow"></button>
-                            <button type="button" class="color-btn" data-color="#FF6600" style="background: #FF6600;" title="Orange"></button>
-                            <button type="button" class="color-btn" data-color="#9933FF" style="background: #9933FF;" title="Purple"></button>
-                            <button type="button" class="color-btn" data-color="#CCFF00" style="background: #CCFF00;" title="Lime"></button>
-                            <button type="button" class="color-btn" data-color="#FF69B4" style="background: #FF69B4;" title="Pink"></button>
-                            <button type="button" class="color-btn" data-color="#00FF00" style="background: #00FF00;" title="Green"></button>
-                            <button type="button" class="color-btn" data-color="#FFB6C1" style="background: #FFB6C1;" title="Light Pink"></button>
-                            <button type="button" class="color-btn" data-color="#FF1493" style="background: #FF1493;" title="Deep Pink"></button>
+                            <button type="button" class="color-btn" data-color="#FF00FF" style="background: #FF00FF;"></button>
+                            <button type="button" class="color-btn" data-color="#00FFFF" style="background: #00FFFF;"></button>
+                            <button type="button" class="color-btn" data-color="#FFFF00" style="background: #FFFF00;"></button>
+                            <button type="button" class="color-btn" data-color="#FF6600" style="background: #FF6600;"></button>
+                            <button type="button" class="color-btn" data-color="#9933FF" style="background: #9933FF;"></button>
+                            <button type="button" class="color-btn" data-color="#CCFF00" style="background: #CCFF00;"></button>
+                            <button type="button" class="color-btn" data-color="#FF69B4" style="background: #FF69B4;"></button>
+                            <button type="button" class="color-btn" data-color="#00FF00" style="background: #00FF00;"></button>
+                            <button type="button" class="color-btn" data-color="#FFB6C1" style="background: #FFB6C1;"></button>
+                            <button type="button" class="color-btn" data-color="#FF1493" style="background: #FF1493;"></button>
                         </div>
                         <input 
                             type="color" 
@@ -109,81 +87,30 @@
                             value="#FF00FF"
                             class="color-input"
                         >
-                        <small class="input-hint">Or use the color picker above</small>
-                    </div>
-
-                    <!-- Preview Section -->
-                    <div class="preview-section">
-                        <h3>Preview</h3>
-                        <div class="sticker-preview" id="stickerPreview">
-                            <div class="preview-placeholder">
-                                <p>Your customizations will appear here!</p>
-                                <p class="preview-hint">Fill out the form above to see a preview</p>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="form-actions">
                         <button type="button" class="btn-secondary" id="skipBtn">
-                            Skip Customization →
+                            Skip
                         </button>
                         <button type="submit" class="btn-primary" id="generateBtn">
-                            <span class="btn-icon">✨</span>
-                            Generate My Sticker!
-                            <span class="btn-icon">✨</span>
+                            Generate Sticker
                         </button>
                     </div>
                 </form>
             </div>
         </main>
-
-        <footer class="page-footer">
-            <p>Make it uniquely YOU! 💖</p>
-        </footer>
-    </div>
-
-    <!-- Windows Taskbar -->
-    <div class="taskbar">
-        <button class="taskbar-start">START</button>
-        <div class="taskbar-buttons">
-            <button class="taskbar-btn" onclick="window.location.href='landing.html'">
-                <span>🏠</span> Home
-            </button>
-            <button class="taskbar-btn active" onclick="window.location.href='mood-selection.html'">
-                <span>🎨</span> Create
-            </button>
-            <button class="taskbar-btn" onclick="window.location.href='gallery.html'">
-                <span>🖼️</span> Gallery
-            </button>
-        </div>
-        <div class="taskbar-clock" id="taskbarClock"></div>
     </div>
 
     <!-- Loading Modal -->
     <div class="modal" id="loadingModal">
-        <div class="modal-content loading-content">
-            <div class="loading-spinner"></div>
+        <div class="modal-content">
             <h2>Creating Your Sticker...</h2>
-            <p class="loading-text">Adding that Y2K magic! ✨</p>
+            <p>Please wait</p>
         </div>
     </div>
 
     <script src="../js/personalization.js"></script>
-    <script>
-        // Update taskbar clock
-        function updateClock() {
-            const now = new Date();
-            const time = now.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                hour12: false 
-            });
-            const clock = document.getElementById('taskbarClock');
-            if (clock) clock.textContent = time;
-        }
-        updateClock();
-        setInterval(updateClock, 1000);
-    </script>
 </body>
 </html>

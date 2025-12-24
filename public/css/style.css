@@ -363,74 +363,64 @@ body {
 }
 
 /* ==================== PERSONALIZATION PAGE ==================== */
-.personalization-page {
-    background: #f5d7d7;
-    background-image: 
-        linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-    background-size: 20px 20px;
+.personalization-page,
+.result-page {
+    background: #ffffff;
 }
 
 .selected-mood-display {
     text-align: center;
-    margin-bottom: var(--spacing-xl);
-    padding: var(--spacing-lg);
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--radius-lg);
+    margin-bottom: 40px;
+    padding: 20px;
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
 }
 
 .selected-mood-label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: var(--spacing-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 12px;
 }
 
 .mood-badge {
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-md) var(--spacing-lg);
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--radius-xl);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    gap: 12px;
+    padding: 12px 20px;
 }
 
 .mood-badge-emoji,
 .mood-badge-icon {
     width: 32px;
     height: 32px;
-    opacity: 0.9;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.9);
+    color: #000;
 }
 
 .mood-badge-icon svg {
     width: 100%;
     height: 100%;
     stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
 }
 
 .mood-badge-name {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 600;
-    color: #ffffff;
-    letter-spacing: -0.02em;
+    color: #000;
 }
 
 .customization-section {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-xl);
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .section-header {
@@ -456,44 +446,10 @@ body {
 
 .form-group label {
     display: block;
-    font-family: 'Righteous', cursive;
-    font-size: 1.4rem;
-    color: var(--hot-pink);
-    margin-bottom: 15px;
-}
-
-.label-icon {
-    font-size: 1.6rem;
-    margin-right: 10px;
-}
-
-.form-input {
-    width: 100%;
-    padding: 15px 20px;
-    font-family: 'VT323', monospace;
-    font-size: 1.3rem;
-    background: rgba(0, 0, 0, 0.5);
-    border: 2px solid var(--electric-blue);
-    border-radius: 10px;
-    color: white;
-    transition: all 0.3s ease;
-}
-
-.form-input:focus {
-    outline: none;
-    border-color: var(--neon-pink);
-    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
-}
-
-.form-input::placeholder {
-    color: #666;
-}
-
-.input-hint {
-    display: block;
-    margin-top: 8px;
-    font-size: 1rem;
-    color: #888;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #000;
+    margin-bottom: 8px;
 }
 
 .phrase-options {
@@ -504,55 +460,50 @@ body {
 }
 
 .phrase-btn {
-    font-family: 'VT323', monospace;
-    font-size: 1.2rem;
-    padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid var(--lime-green);
-    border-radius: 20px;
-    color: white;
+    padding: 8px 16px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    color: #000;
+    font-size: 0.875rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .phrase-btn:hover {
-    background: var(--lime-green);
-    color: #000;
-    transform: scale(1.05);
+    border-color: #000;
 }
 
 .phrase-btn.selected {
-    background: var(--lime-green);
-    color: #000;
-    box-shadow: 0 0 15px var(--lime-green);
+    background: #000;
+    border-color: #000;
+    color: #fff;
 }
 
 .color-palette {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .color-btn {
-    width: 50px;
-    height: 50px;
-    border: 3px solid transparent;
+    width: 36px;
+    height: 36px;
+    border: 2px solid #e0e0e0;
     border-radius: 50%;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     position: relative;
 }
 
 .color-btn:hover {
-    transform: scale(1.1);
-    border-color: white;
+    border-color: #000;
 }
 
 .color-btn.selected {
-    border-color: white;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-    transform: scale(1.15);
+    border-color: #000;
+    border-width: 3px;
 }
 
 .color-btn.selected::after {
@@ -561,17 +512,17 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: white;
-    font-size: 1.5rem;
+    color: #fff;
+    font-size: 0.875rem;
     font-weight: bold;
-    text-shadow: 0 0 5px black;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .color-input {
     width: 100%;
-    height: 60px;
-    border: 2px solid var(--electric-blue);
-    border-radius: 10px;
+    height: 48px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     cursor: pointer;
 }
 
@@ -660,26 +611,9 @@ body {
 
 .form-actions {
     display: flex;
-    gap: 20px;
+    gap: 12px;
     justify-content: center;
-    margin-top: 40px;
-}
-
-.form-actions button {
-    font-family: 'VT323', monospace;
-    font-size: 1.4rem;
-    padding: 20px 40px;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.btn-icon {
-    font-size: 1.6rem;
+    margin-top: 32px;
 }
 
 .loading-content {
@@ -737,7 +671,7 @@ body {
 
 /* ==================== RESULT PAGE ==================== */
 .result-page {
-    background: linear-gradient(135deg, #1a0033 0%, #000428 50%, #004e92 100%);
+    background: #ffffff;
 }
 
 .success-banner {
@@ -804,104 +738,29 @@ body {
     50% { box-shadow: 0 0 50px rgba(255, 0, 255, 0.5); }
 }
 
+.sticker-display-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.sticker-frame {
+    display: inline-block;
+}
+
 .generated-sticker {
     width: 100%;
     max-width: 400px;
     height: auto;
-    border-radius: 15px;
+    border-radius: 12px;
     display: block;
+    border: 1px solid #e0e0e0;
 }
 
-.sticker-info {
-    margin-top: 15px;
-    text-align: center;
-}
-
-.sticker-mood {
-    font-family: 'Righteous', cursive;
-    font-size: 1.5rem;
-    color: var(--hot-pink);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-#stickerEmoji {
-    font-size: 2rem;
-}
-
-/* Action Sections */
 .result-actions {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 30px;
-    margin-bottom: 50px;
-    align-items: start;
-}
-
-.action-section {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 30px;
-    border-radius: 20px;
-    border: 2px solid var(--purple);
-    text-align: center;
-}
-
-.action-section h3 {
-    font-family: 'Righteous', cursive;
-    font-size: 1.8rem;
-    color: var(--lime-green);
-    margin-bottom: 10px;
-}
-
-.action-section p {
-    font-size: 1.2rem;
-    color: #ccc;
-    margin-bottom: 20px;
-}
-
-.action-note {
-    font-size: 1rem;
-    color: #888;
-    margin-top: 15px;
-}
-
-.btn-download {
-    font-family: 'VT323', monospace;
-    font-size: 1.5rem;
-    padding: 20px 40px;
-    background: var(--gradient-1);
-    border: none;
-    border-radius: 50px;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: var(--shadow-deep);
-}
-
-.btn-download:hover {
-    transform: scale(1.05);
-    box-shadow: var(--glow-pink);
-}
-
-.divider {
     display: flex;
-    align-items: center;
+    gap: 12px;
     justify-content: center;
-    color: var(--electric-blue);
-    font-size: 1.2rem;
-    font-weight: bold;
-}
-
-.divider span {
-    padding: 10px 20px;
-    background: rgba(0, 255, 255, 0.1);
-    border: 2px solid var(--electric-blue);
-    border-radius: 50px;
+    flex-wrap: wrap;
 }
 
 /* Blockchain Buttons */

@@ -4,174 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Sticker is Ready! ✨</title>
+    <title>Your Sticker is Ready</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body class="result-page">
-    <!-- Animated background elements -->
-    <div class="sparkles-container" id="sparkles"></div>
-    <div class="floating-shapes" id="shapes"></div>
-    
     <div class="container">
         <header class="page-header">
-            <h1 class="page-title">Your Sticker is Ready! 🎉</h1>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: 100%"></div>
-            </div>
-            <p class="step-indicator">Step 3 of 3 - Complete!</p>
+            <h1>Your Sticker is Ready</h1>
         </header>
 
         <main class="result-content">
-            <!-- Success Message -->
-            <div class="success-banner">
-                <span class="success-icon">✨</span>
-                <h2>Sticker Generated Successfully!</h2>
-                <p>Your totally rad Y2K mood sticker is ready to download!</p>
-            </div>
-
             <!-- Sticker Display -->
             <div class="sticker-display-section">
                 <div class="sticker-frame">
                     <img id="stickerImage" src="" alt="Your Mood Sticker" class="generated-sticker">
-                    <div class="sticker-info">
-                        <p class="sticker-mood">
-                            <span id="stickerEmoji">😊</span>
-                            <span id="stickerMoodName">Loading...</span>
-                        </p>
-                    </div>
                 </div>
             </div>
 
             <!-- Action Buttons -->
             <div class="result-actions">
-                <div class="action-section download-section">
-                    <h3>💾 Download Your Sticker</h3>
-                    <p>Save it to your device - it's FREE!</p>
-                    <button class="btn-download" id="downloadBtn">
-                        <span class="btn-icon">⬇️</span>
-                        Download Sticker
-                    </button>
-                    <p class="action-note">PNG format • 500x500px</p>
-                </div>
-
-                <div class="divider">
-                    <span>OR</span>
-                </div>
-
-                <div class="action-section nft-section">
-                    <h3>🌟 Mint as NFT</h3>
-                    <p>Own it on the blockchain forever!</p>
-                    
-                    <div class="blockchain-options">
-                        <button class="btn-blockchain lukso-btn" data-blockchain="lukso">
-                            <span class="blockchain-icon">🔷</span>
-                            <span>
-                                <strong>LUKSO</strong>
-                                <small>Digital Fashion & Lifestyle</small>
-                            </span>
-                        </button>
-                        
-                        <button class="btn-blockchain polygon-btn" data-blockchain="polygon">
-                            <span class="blockchain-icon">🟣</span>
-                            <span>
-                                <strong>Polygon</strong>
-                                <small>Fast & Eco-Friendly</small>
-                            </span>
-                        </button>
-                    </div>
-                    
-                    <p class="action-note">You'll need a crypto wallet • Small gas fee applies</p>
-                </div>
-            </div>
-
-            <!-- Share Section -->
-            <div class="share-section">
-                <h3>Share Your Vibe! 💖</h3>
-                <div class="share-buttons">
-                    <button class="share-btn twitter-btn">
-                        <span>🐦</span> Twitter
-                    </button>
-                    <button class="share-btn instagram-btn">
-                        <span>📷</span> Instagram
-                    </button>
-                    <button class="share-btn copy-btn" id="copyLinkBtn">
-                        <span>🔗</span> Copy Link
-                    </button>
-                </div>
-            </div>
-
-            <!-- Create Another -->
-            <div class="create-another-section">
+                <button class="btn-primary" id="downloadBtn">
+                    Download Sticker
+                </button>
                 <button class="btn-secondary" id="createAnotherBtn">
-                    Create Another Sticker →
+                    Create Another
                 </button>
             </div>
-
-            <!-- Sticker Details -->
-            <div class="sticker-details">
-                <h4>Sticker Details</h4>
-                <div class="details-grid">
-                    <div class="detail-item">
-                        <span class="detail-label">Sticker ID:</span>
-                        <span class="detail-value" id="stickerId">#---</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Created:</span>
-                        <span class="detail-value" id="stickerDate">---</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Downloads:</span>
-                        <span class="detail-value" id="stickerDownloads">0</span>
-                    </div>
-                </div>
-            </div>
         </main>
-
-        <footer class="page-footer">
-            <p>Thanks for creating with Y2K Mood Stickers! ✨</p>
-        </footer>
-    </div>
-
-    <!-- NFT Modal -->
-    <div class="modal" id="nftModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Mint Your Sticker as NFT</h2>
-                <button class="modal-close" id="closeNftModal">×</button>
-            </div>
-            <div class="modal-body">
-                <p>You selected: <strong id="selectedBlockchain">---</strong></p>
-                <p class="modal-note">⚠️ NFT minting is currently a demo feature. In production, this would connect to your wallet and mint on the blockchain.</p>
-                <div class="wallet-info">
-                    <label for="walletAddress">Wallet Address (Optional):</label>
-                    <input 
-                        type="text" 
-                        id="walletAddress" 
-                        placeholder="0x..."
-                        class="form-input"
-                    >
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" id="cancelNftBtn">Cancel</button>
-                <button class="btn-primary" id="confirmNftBtn">Mint NFT (Demo)</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div class="modal" id="successModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>🎊 Success!</h2>
-            </div>
-            <div class="modal-body">
-                <p id="successMessage">Action completed successfully!</p>
-            </div>
-            <div class="modal-actions">
-                <button class="btn-primary" id="closeSuccessModal">Awesome!</button>
-            </div>
-        </div>
     </div>
 
     <script src="../js/sticker-result.js"></script>
