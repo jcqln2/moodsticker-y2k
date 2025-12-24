@@ -536,12 +536,17 @@ body {
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-xl) var(--spacing-lg);
     text-align: center;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 180px;
+    justify-content: center;
 }
 
 .mood-card::before {
@@ -581,16 +586,38 @@ body {
     background: rgba(255, 105, 180, 0.1);
 }
 
-.mood-emoji {
-    font-size: 2.5rem;
-    display: block;
-    margin-bottom: var(--spacing-md);
-    opacity: 0.8;
-    transition: all 0.3s ease;
+.mood-emoji,
+.mood-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto var(--spacing-md);
+    opacity: 0.6;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color: rgba(255, 255, 255, 0.7);
+    flex-shrink: 0;
 }
 
-.mood-card:hover .mood-emoji {
+.mood-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    fill: none;
+}
+
+.mood-card:hover .mood-emoji,
+.mood-card:hover .mood-icon {
     opacity: 1;
+    transform: scale(1.15) translateY(-4px);
+    color: rgba(255, 105, 180, 1);
+}
+
+.mood-card.selected .mood-icon {
+    opacity: 1;
+    color: rgba(255, 105, 180, 1);
     transform: scale(1.1);
 }
 
@@ -707,13 +734,23 @@ body {
     letter-spacing: -0.02em;
 }
 
-.selected-emoji {
-    font-size: 5rem;
+.selected-emoji,
+.selected-icon {
+    width: 64px;
+    height: 64px;
     display: block;
-    animation: emojiPop 0.5s ease;
+    margin: 0 auto;
+    animation: iconPop 0.5s ease;
+    color: rgba(255, 105, 180, 1);
 }
 
-@keyframes emojiPop {
+.selected-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+}
+
+@keyframes iconPop {
     0% { transform: scale(0); }
     50% { transform: scale(1.2); }
     100% { transform: scale(1); }
@@ -856,9 +893,21 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.mood-badge-emoji {
-    font-size: 2rem;
+.mood-badge-emoji,
+.mood-badge-icon {
+    width: 32px;
+    height: 32px;
     opacity: 0.9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.mood-badge-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
 }
 
 .mood-badge-name {

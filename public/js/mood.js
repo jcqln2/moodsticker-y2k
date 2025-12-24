@@ -11,6 +11,23 @@ function hexToRgb(hex) {
         '255, 105, 180'; // Default to hot pink
 }
 
+// Get modern icon for theme (using SVG icons instead of emojis)
+function getThemeIcon(themeName) {
+    const icons = {
+        'Bratz Vibes': '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/><circle cx="12" cy="12" r="3"/></svg>',
+        'Lipgloss Queen': '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><path d="M12 6v6l4 2"/></svg>',
+        'Butterfly Clip Energy': '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+        '90s Makeup Mood': '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+        'Spice Girls Style': '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+        'Clueless Chic': '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/></svg>',
+        'Y2K Party': '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+        'Glitter & Glam': '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'
+    };
+    
+    // Return icon or a default geometric shape
+    return icons[themeName] || '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>';
+}
+
 // ==================== STATE ====================
 let moods = [];
 let selectedMood = null;
@@ -113,8 +130,11 @@ function renderMoodGrid() {
         card.className = 'mood-card';
         card.dataset.moodId = mood.id;
         
+        // Create a modern icon based on theme name
+        const themeIcon = getThemeIcon(mood.name);
+        
         card.innerHTML = `
-            <div class="mood-emoji">${mood.emoji}</div>
+            <div class="mood-icon">${themeIcon}</div>
             <h3 class="mood-name">${mood.name}</h3>
             <p class="mood-description">${mood.description}</p>
         `;
@@ -193,22 +213,26 @@ document.getElementById('randomBtn').addEventListener('click', async () => {
 function showConfirmationModal(mood) {
     const modal = document.getElementById('confirmModal');
     const selectedMoodName = document.getElementById('selectedMoodName');
-    const selectedEmoji = document.getElementById('selectedEmoji');
+    const selectedIcon = document.getElementById('selectedIcon');
     const moodNameRepeat = document.getElementById('moodNameRepeat');
     
     selectedMoodName.textContent = mood.name;
-    selectedEmoji.textContent = mood.emoji;
+    if (selectedIcon) {
+        selectedIcon.innerHTML = getThemeIcon(mood.name);
+    }
     moodNameRepeat.textContent = mood.name;
     
     modal.classList.add('show');
     
     // Play a little animation
-    setTimeout(() => {
-        selectedEmoji.style.transform = 'scale(1.2)';
+    if (selectedIcon) {
         setTimeout(() => {
-            selectedEmoji.style.transform = 'scale(1)';
-        }, 200);
-    }, 100);
+            selectedIcon.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                selectedIcon.style.transform = 'scale(1)';
+            }, 200);
+        }, 100);
+    }
 }
 
 // Modal button handlers
