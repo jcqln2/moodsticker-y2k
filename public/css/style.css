@@ -1,26 +1,43 @@
 /* /public/css/style.css */
 
 /* ==================== FONTS & VARIABLES ==================== */
-@import url('https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Press+Start+2P&family=VT323&family=Righteous&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 :root {
-    /* Y2K Color Palette */
+    /* Modern Y2K Color Palette - Refined */
     --neon-pink: #FF00FF;
     --electric-blue: #00FFFF;
     --lime-green: #CCFF00;
     --hot-pink: #FF69B4;
     --purple: #9933FF;
     --orange: #FF6600;
+    --deep-pink: #FF1493;
+    --gold: #FFD700;
+    --cyan: #00CED1;
     
-    /* Gradients */
-    --gradient-1: linear-gradient(135deg, #FF00FF, #00FFFF);
-    --gradient-2: linear-gradient(135deg, #FF69B4, #9933FF);
-    --gradient-3: linear-gradient(135deg, #CCFF00, #FF6600);
+    /* Modern Gradients - Softer */
+    --gradient-1: linear-gradient(135deg, rgba(255, 0, 255, 0.8), rgba(0, 255, 255, 0.8));
+    --gradient-2: linear-gradient(135deg, rgba(255, 105, 180, 0.8), rgba(153, 51, 255, 0.8));
+    --gradient-3: linear-gradient(135deg, rgba(255, 215, 0, 0.8), rgba(255, 20, 147, 0.8));
     
-    /* Shadows & Effects */
-    --glow-pink: 0 0 20px rgba(255, 0, 255, 0.6);
-    --glow-blue: 0 0 20px rgba(0, 255, 255, 0.6);
-    --shadow-deep: 0 8px 32px rgba(0, 0, 0, 0.3);
+    /* Modern Shadows & Effects - Subtle */
+    --glow-pink: 0 0 30px rgba(255, 0, 255, 0.4);
+    --glow-blue: 0 0 30px rgba(0, 255, 255, 0.4);
+    --shadow-deep: 0 20px 60px rgba(0, 0, 0, 0.4);
+    --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.2);
+    
+    /* Modern Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
 }
 
 /* ==================== RESET & BASE ==================== */
@@ -31,12 +48,15 @@
 }
 
 body {
-    font-family: 'VT323', monospace;
-    background: #000;
-    color: #fff;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0a0a;
+    color: #ffffff;
     overflow-x: hidden;
     min-height: 100vh;
     position: relative;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* ==================== ANIMATED BACKGROUNDS ==================== */
@@ -161,26 +181,29 @@ body {
 }
 
 .glitch-text {
-    font-family: 'Bungee Shade', cursive;
-    font-size: clamp(2rem, 8vw, 5rem);
-    background: var(--gradient-1);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 105, 180, 0.9) 50%, rgba(0, 255, 255, 0.9) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-shadow: 
-        2px 2px 0 var(--neon-pink),
-        4px 4px 0 var(--electric-blue);
-    animation: glitchAnimation 3s infinite;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: var(--spacing-md);
+    animation: subtleGlow 4s ease-in-out infinite;
 }
 
-@keyframes glitchAnimation {
-    0%, 100% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(2px, -2px); }
-    60% { transform: translate(-2px, -2px); }
-    80% { transform: translate(2px, 2px); }
+@keyframes subtleGlow {
+    0%, 100% { 
+        filter: brightness(1);
+        opacity: 1;
+    }
+    50% { 
+        filter: brightness(1.1);
+        opacity: 0.95;
+    }
 }
 
 .subtitle-container {
@@ -236,18 +259,21 @@ body {
 }
 
 .tagline {
-    font-size: 1.8rem;
-    color: var(--lime-green);
-    margin-bottom: 20px;
-    font-family: 'Press Start 2P', cursive;
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: var(--spacing-md);
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
     line-height: 1.6;
+    letter-spacing: 0.01em;
 }
 
 .description {
-    font-size: 1.4rem;
-    line-height: 1.8;
-    margin-bottom: 15px;
-    color: #fff;
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: var(--spacing-sm);
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 400;
 }
 
 .highlight {
@@ -269,19 +295,20 @@ body {
 }
 
 .feature-box {
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid var(--neon-pink);
-    border-radius: 15px;
-    padding: 30px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
     text-align: center;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .feature-box:hover {
-    transform: translateY(-10px);
-    box-shadow: var(--glow-pink);
-    border-color: var(--electric-blue);
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-soft), 0 0 40px rgba(255, 105, 180, 0.2);
+    border-color: rgba(255, 105, 180, 0.4);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .feature-icon {
@@ -297,39 +324,42 @@ body {
 }
 
 .feature-box h3 {
-    font-family: 'Righteous', cursive;
-    font-size: 1.5rem;
-    color: var(--hot-pink);
-    margin-bottom: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: var(--spacing-sm);
+    letter-spacing: -0.02em;
 }
 
 .feature-box p {
-    font-size: 1.2rem;
-    color: #ccc;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 400;
 }
 
 /* CTA Button */
 .cta-button {
     position: relative;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 1.2rem;
-    padding: 25px 60px;
-    background: var(--gradient-1);
-    border: none;
-    border-radius: 50px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 18px 48px;
+    background: linear-gradient(135deg, rgba(255, 105, 180, 0.9), rgba(153, 51, 255, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-xl);
     color: #fff;
     cursor: pointer;
     overflow: hidden;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow-deep);
-    text-transform: uppercase;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-soft);
+    letter-spacing: 0.02em;
 }
 
 .cta-button:hover {
-    transform: scale(1.1);
-    box-shadow: 
-        var(--glow-pink),
-        var(--shadow-deep);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-deep), 0 0 40px rgba(255, 105, 180, 0.4);
+    background: linear-gradient(135deg, rgba(255, 105, 180, 1), rgba(153, 51, 255, 1));
 }
 
 .cta-button:active {
@@ -432,13 +462,15 @@ body {
 }
 
 .page-title {
-    font-family: 'Righteous', cursive;
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    background: var(--gradient-2);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 105, 180, 0.8) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 20px;
+    margin-bottom: var(--spacing-md);
+    letter-spacing: -0.03em;
 }
 
 .progress-bar {
@@ -500,13 +532,14 @@ body {
 }
 
 .mood-card {
-    background: rgba(0, 0, 0, 0.5);
-    border: 3px solid transparent;
-    border-radius: 20px;
-    padding: 30px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
 }
@@ -535,38 +568,46 @@ body {
 }
 
 .mood-card:hover {
-    transform: scale(1.05) rotate(-2deg);
-    box-shadow: var(--glow-pink);
+    transform: translateY(-8px);
+    border-color: rgba(255, 105, 180, 0.5);
+    box-shadow: var(--shadow-soft), 0 0 40px rgba(255, 105, 180, 0.2);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .mood-card.selected {
-    border-color: var(--lime-green);
-    box-shadow: 0 0 30px var(--lime-green);
-    transform: scale(1.1);
+    border-color: var(--hot-pink);
+    box-shadow: var(--shadow-soft), 0 0 50px rgba(255, 105, 180, 0.4);
+    transform: translateY(-4px);
+    background: rgba(255, 105, 180, 0.1);
 }
 
 .mood-emoji {
-    font-size: 4rem;
+    font-size: 2.5rem;
     display: block;
-    margin-bottom: 15px;
-    animation: emojiFloat 3s ease-in-out infinite;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.8;
+    transition: all 0.3s ease;
 }
 
-@keyframes emojiFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+.mood-card:hover .mood-emoji {
+    opacity: 1;
+    transform: scale(1.1);
 }
 
 .mood-name {
-    font-family: 'Righteous', cursive;
-    font-size: 1.5rem;
-    color: var(--hot-pink);
-    margin-bottom: 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: var(--spacing-xs);
+    letter-spacing: -0.02em;
 }
 
 .mood-description {
-    font-size: 1.1rem;
-    color: #ccc;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 400;
+    line-height: 1.5;
 }
 
 /* Random Button */
@@ -658,10 +699,12 @@ body {
 }
 
 .modal-header h2 {
-    font-family: 'Righteous', cursive;
-    font-size: 2rem;
-    color: var(--lime-green);
-    margin-bottom: 15px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: var(--spacing-md);
+    letter-spacing: -0.02em;
 }
 
 .selected-emoji {
@@ -694,13 +737,15 @@ body {
 
 .btn-secondary,
 .btn-primary {
-    font-family: 'VT323', monospace;
-    font-size: 1.3rem;
-    padding: 15px 30px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 12px 24px;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.01em;
 }
 
 .btn-secondary {
@@ -715,14 +760,15 @@ body {
 }
 
 .btn-primary {
-    background: var(--gradient-1);
+    background: linear-gradient(135deg, rgba(255, 105, 180, 0.9), rgba(153, 51, 255, 0.9));
     color: #fff;
-    box-shadow: var(--shadow-deep);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn-primary:hover {
-    transform: scale(1.05);
-    box-shadow: var(--glow-pink);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-deep), 0 0 40px rgba(255, 105, 180, 0.4);
 }
 
 /* Page Footer */
@@ -783,46 +829,52 @@ body {
 
 .selected-mood-display {
     text-align: center;
-    margin-bottom: 40px;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid var(--neon-pink);
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
 }
 
 .selected-mood-label {
-    font-size: 1.2rem;
-    color: var(--lime-green);
-    margin-bottom: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .mood-badge {
     display: inline-flex;
     align-items: center;
-    gap: 15px;
-    padding: 15px 30px;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 50px;
-    border: 2px solid var(--electric-blue);
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .mood-badge-emoji {
-    font-size: 3rem;
+    font-size: 2rem;
+    opacity: 0.9;
 }
 
 .mood-badge-name {
-    font-family: 'Righteous', cursive;
-    font-size: 1.8rem;
-    color: var(--hot-pink);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: -0.02em;
 }
 
 .customization-section {
-    background: rgba(0, 0, 0, 0.3);
-    border: 2px solid var(--purple);
-    border-radius: 20px;
-    padding: 40px;
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
 }
 
 .section-header {

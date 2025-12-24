@@ -3,6 +3,14 @@
 // ==================== CONFIGURATION ====================
 const API_BASE_URL = window.location.origin + '/api';
 
+// Helper function to convert hex to RGB
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? 
+        `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
+        '255, 105, 180'; // Default to hot pink
+}
+
 // ==================== STATE ====================
 let moods = [];
 let selectedMood = null;
@@ -106,7 +114,7 @@ function renderMoodGrid() {
         card.dataset.moodId = mood.id;
         
         card.innerHTML = `
-            <span class="mood-emoji">${mood.emoji}</span>
+            <div class="mood-emoji">${mood.emoji}</div>
             <h3 class="mood-name">${mood.name}</h3>
             <p class="mood-description">${mood.description}</p>
         `;
@@ -114,15 +122,17 @@ function renderMoodGrid() {
         // Click handler
         card.addEventListener('click', () => selectMood(mood));
         
-        // Hover effect with color
+        // Hover effect with color (modern subtle effect)
         card.addEventListener('mouseenter', () => {
-            card.style.borderColor = mood.color;
-            card.style.boxShadow = `0 0 20px ${mood.color}`;
+            if (selectedMood?.id !== mood.id) {
+                card.style.borderColor = `rgba(${hexToRgb(mood.color)}, 0.4)`;
+                card.style.boxShadow = `0 10px 40px rgba(${hexToRgb(mood.color)}, 0.2)`;
+            }
         });
         
         card.addEventListener('mouseleave', () => {
             if (selectedMood?.id !== mood.id) {
-                card.style.borderColor = 'transparent';
+                card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
                 card.style.boxShadow = 'none';
             }
         });
@@ -148,8 +158,9 @@ function selectMood(mood) {
     const selectedCard = document.querySelector(`[data-mood-id="${mood.id}"]`);
     if (selectedCard) {
         selectedCard.classList.add('selected');
-        selectedCard.style.borderColor = mood.color;
-        selectedCard.style.boxShadow = `0 0 30px ${mood.color}`;
+        const rgb = hexToRgb(mood.color);
+        selectedCard.style.borderColor = `rgba(${rgb}, 0.6)`;
+        selectedCard.style.boxShadow = `0 10px 40px rgba(${rgb}, 0.3), 0 0 50px rgba(${rgb}, 0.2)`;
     }
     
     // Show confirmation modal
